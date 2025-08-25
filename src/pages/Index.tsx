@@ -495,7 +495,7 @@ const Index = () => {
                   )}
                   {audioPlaying && selectedCamera?.id === 'CAM-03' && (
                     <div className="text-vhs-red animate-pulse font-bold">
-                      >>> АУДИО В ПРЯМОМ ЭФИРЕ <<<
+                      &gt;&gt;&gt; АУДИО В ПРЯМОМ ЭФИРЕ &lt;&lt;&lt;
                     </div>
                   )}
                 </CardContent>
