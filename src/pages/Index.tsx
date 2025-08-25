@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 
 const Index = () => {
@@ -12,6 +14,10 @@ const Index = () => {
   const [selectedCamera, setSelectedCamera] = useState<any>(null);
   const [cameraDialogOpen, setCameraDialogOpen] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [employeeName, setEmployeeName] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -28,6 +34,36 @@ const Index = () => {
       clearInterval(glitchTimer);
     };
   }, []);
+
+  const handleLogin = () => {
+    // Список авторизованных сотрудников
+    const authorizedPersonnel = [
+      { name: 'Dr. Petrov', password: 'reqn2024' },
+      { name: 'Scientist Volkov', password: 'experiment47' },
+      { name: 'Agent Smith', password: 'security01' },
+      { name: 'Dr. Kozlov', password: 'laboratory' },
+      { name: 'Researcher Ivanov', password: 'specimen23' },
+    ];
+
+    const user = authorizedPersonnel.find(
+      person => person.name.toLowerCase() === employeeName.toLowerCase() && 
+                person.password === password
+    );
+
+    if (user) {
+      setIsAuthenticated(true);
+      setLoginError('');
+    } else {
+      setLoginError('ОШИБКА: Неверные данные авторизации');
+      setTimeout(() => setLoginError(''), 3000);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-GB', { 
@@ -226,6 +262,92 @@ const Index = () => {
     { id: 'RQ-47', name: 'Кукла "Анна"', status: 'MISSING', threat: 'HIGH' },
     { id: 'RQ-81', name: 'Игрушечный робот', status: 'ACTIVE', threat: 'MEDIUM' }
   ];
+
+  // Экран авторизации
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-vhs-black text-vhs-green font-vhs flex items-center justify-center">
+        {/* Scanline effect */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute w-full h-0.5 bg-vhs-green opacity-20 animate-scanline"></div>
+        </div>
+
+        {/* Static overlay */}
+        <div className={`fixed inset-0 pointer-events-none transition-opacity duration-100 ${
+          glitchActive ? 'opacity-10' : 'opacity-5'
+        }`}>
+          <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJzdGF0aWMiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgogICAgICA8Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMC41IiBmaWxsPSIjMDBGRjAwIiBvcGFjaXR5PSIwLjEiLz4KICAgIDwvcGF0dGVybj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9InVybCgjc3RhdGljKSIvPgo8L3N2Zz4K')] animate-static"></div>
+        </div>
+
+        <Card className="w-full max-w-md bg-vhs-black border-vhs-green">
+          <CardHeader className="text-center pb-2">
+            <div className={`mb-4 ${glitchActive ? 'animate-glitch' : ''}`}>
+              <h1 className="text-3xl font-bold mb-2">REQN CO</h1>
+              <h2 className="text-xl">LABORATORY</h2>
+              <div className="text-xs opacity-70 mt-2">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</div>
+            </div>
+            <div className="border-t border-vhs-green pt-4">
+              <Icon name="Shield" size={32} className="mx-auto mb-2" />
+              <h3 className="text-lg font-mono">АВТОРИЗАЦИЯ ПЕРСОНАЛА</h3>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="employee" className="text-xs opacity-70">ИМЯ СОТРУДНИКА:</Label>
+              <Input
+                id="employee"
+                type="text"
+                value={employeeName}
+                onChange={(e) => setEmployeeName(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="bg-vhs-black border-vhs-green text-vhs-green placeholder-vhs-gray focus:border-vhs-white mt-1 font-mono"
+                placeholder="Введите ваше имя"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="password" className="text-xs opacity-70">ПАРОЛЬ:</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="bg-vhs-black border-vhs-green text-vhs-green placeholder-vhs-gray focus:border-vhs-white mt-1 font-mono"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {loginError && (
+              <div className="text-vhs-red text-xs animate-pulse font-mono text-center">
+                {loginError}
+              </div>
+            )}
+
+            <Button 
+              onClick={handleLogin}
+              className="w-full bg-vhs-green text-vhs-black hover:bg-vhs-white font-mono"
+            >
+              ВОЙТИ В СИСТЕМУ
+            </Button>
+
+            <div className="text-xs opacity-50 text-center space-y-1">
+              <div>УРОВЕНЬ ДОСТУПА: ОГРАНИЧЕННЫЙ</div>
+              <div className="text-vhs-red">⚠ НЕСАНКЦИОНИРОВАННЫЙ ДОСТУП ЗАПРЕЩЕН</div>
+            </div>
+
+            <div className="border-t border-vhs-green pt-2 text-xs opacity-40">
+              <div className="text-center">
+                <div>Тестовые данные:</div>
+                <div>Dr. Petrov / reqn2024</div>
+                <div>Agent Smith / security01</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-vhs-black text-vhs-green font-vhs">
