@@ -41,7 +41,8 @@ const Index = () => {
     { id: 'CAM-01', location: 'Лаборатория А', status: 'ONLINE', feed: 'img/eb75ae17-3e30-47b6-a921-f69303b8c306.jpg' },
     { id: 'CAM-02', location: 'Комната содержания', status: 'ONLINE', feed: 'img/5033c22d-cfc4-451a-9cbf-d452a8ae50d1.jpg' },
     { id: 'CAM-03', location: 'Коридор Б', status: 'OFFLINE', feed: null },
-    { id: 'CAM-04', location: 'Хранилище', status: 'ERROR', feed: null }
+    { id: 'CAM-04', location: 'Хранилище', status: 'ERROR', feed: null },
+    { id: 'CAM-05', location: 'Испытательная камера', status: 'ONLINE', feed: 'https://cdn.poehali.dev/files/f317b2ac-fec7-4fa2-9b78-655d91a0f390.jpg' }
   ];
 
   const incidents = [
@@ -263,7 +264,7 @@ const Index = () => {
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
                     <span>Камеры онлайн:</span>
-                    <span className="text-vhs-green">2/4</span>
+                    <span className="text-vhs-green">3/5</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Активные инциденты:</span>
