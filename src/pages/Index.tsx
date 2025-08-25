@@ -86,15 +86,124 @@ const Index = () => {
     setTimeout(() => setAudioPlaying(false), 5000);
   };
 
+  const playScreamAndFleshAudio = () => {
+    setAudioPlaying(true);
+    
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    // Функция для создания модулированного звука с искажениями
+    const playDistortedSound = (baseFreq: number, duration: number, delay: number, modFreq: number = 0) => {
+      setTimeout(() => {
+        const oscillator = audioContext.createOscillator();
+        const modOscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        const modGainNode = audioContext.createGain();
+        
+        // Основной генератор
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+        
+        // Модулятор для искажений
+        if (modFreq > 0) {
+          modOscillator.type = 'square';
+          modOscillator.frequency.setValueAtTime(modFreq, audioContext.currentTime);
+          modGainNode.gain.setValueAtTime(50, audioContext.currentTime);
+          
+          modOscillator.connect(modGainNode);
+          modGainNode.connect(oscillator.frequency);
+          modOscillator.start(audioContext.currentTime);
+          modOscillator.stop(audioContext.currentTime + duration);
+        }
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Envelope для создания крика
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      }, delay);
+    };
+
+    // Функция для создания звука разрывания плоти
+    const playFleshTearSound = (delay: number) => {
+      setTimeout(() => {
+        const whiteNoise = audioContext.createBufferSource();
+        const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.5, audioContext.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        
+        // Генерируем белый шум
+        for (let i = 0; i < audioContext.sampleRate * 0.5; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        
+        whiteNoise.buffer = noiseBuffer;
+        
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, audioContext.currentTime);
+        
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        whiteNoise.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        whiteNoise.start(audioContext.currentTime);
+      }, delay);
+    };
+    
+    // Последовательность звуков для CAM-05:
+    
+    // Искаженный крик высокой тональности
+    playDistortedSound(800, 1.5, 0, 30);
+    playDistortedSound(600, 1.2, 200, 25);
+    
+    // Звуки разрывания плоти
+    playFleshTearSound(500);
+    playFleshTearSound(800);
+    playFleshTearSound(1200);
+    
+    // Низкий искаженный стон
+    playDistortedSound(150, 2.0, 1500, 8);
+    playDistortedSound(120, 1.8, 1700, 12);
+    
+    // Еще звуки разрывания
+    playFleshTearSound(2000);
+    playFleshTearSound(2300);
+    
+    // Финальный искаженный крик
+    playDistortedSound(900, 2.5, 3000, 40);
+    playDistortedSound(700, 2.0, 3200, 35);
+    
+    // Последние звуки плоти
+    playFleshTearSound(4000);
+    playFleshTearSound(4500);
+    
+    setTimeout(() => setAudioPlaying(false), 6000);
+  };
+
   const openCamera = (camera: any) => {
     setSelectedCamera(camera);
     setCameraDialogOpen(true);
     
-    // Если открывается CAM-03, проигрываем жуткий звук
+    // Если открывается CAM-03, проигрываем звуки поедания
     if (camera.id === 'CAM-03') {
       setTimeout(() => {
         playCreepyAudio();
       }, 1500);
+    }
+    
+    // Если открывается CAM-05, проигрываем крики и разрывание плоти
+    if (camera.id === 'CAM-05') {
+      setTimeout(() => {
+        playScreamAndFleshAudio();
+      }, 1200);
     }
   };
 
@@ -103,7 +212,7 @@ const Index = () => {
     { id: 'CAM-02', location: 'Комната содержания', status: 'ONLINE', feed: 'img/5033c22d-cfc4-451a-9cbf-d452a8ae50d1.jpg', description: 'Зона хранения активных образцов. Повышенная безопасность.', lastActivity: '02:15' },
     { id: 'CAM-03', location: 'Коридор Б', status: 'OFFLINE', feed: null, description: 'Соединительный коридор. ВНИМАНИЕ: Зафиксированы подозрительные звуки.', lastActivity: '18:33' },
     { id: 'CAM-04', location: 'Хранилище', status: 'ERROR', feed: null, description: 'Архивное хранилище. ОШИБКА СИСТЕМЫ.', lastActivity: 'НЕИЗВЕСТНО' },
-    { id: 'CAM-05', location: 'Испытательная камера', status: 'ONLINE', feed: 'https://cdn.poehali.dev/files/f317b2ac-fec7-4fa2-9b78-655d91a0f390.jpg', description: 'Тестирование поведения образца RQ-23. Активен.', lastActivity: '00:15' }
+    { id: 'CAM-05', location: 'Испытательная камера', status: 'ONLINE', feed: 'https://cdn.poehali.dev/files/f317b2ac-fec7-4fa2-9b78-655d91a0f390.jpg', description: 'Тестирование образца RQ-23. КРИТИЧНО: Аномальная агрессия!', lastActivity: '00:15' }
   ];
 
   const incidents = [
@@ -484,6 +593,14 @@ const Index = () => {
                       <div className="text-vhs-red">18:33 - Последний кадр: тень в коридоре</div>
                       <div className="opacity-70">18:30 - Освещение норма</div>
                     </>
+                  ) : selectedCamera?.id === 'CAM-05' ? (
+                    <>
+                      <div className="text-vhs-red animate-pulse">00:18 - АУДИО: Искаженный крик</div>
+                      <div className="text-vhs-red animate-pulse">00:17 - ЗВУК: Разрывание ткани/плоти</div>
+                      <div className="text-vhs-red">00:15 - RQ-23 ПРОЯВИЛ АГРЕССИЮ</div>
+                      <div className="text-vhs-red">00:12 - Образец вышел из-под контроля</div>
+                      <div className="text-vhs-red">00:10 - ТРЕВОГА: Аномальное поведение</div>
+                    </>
                   ) : (
                     <>
                       <div className="opacity-70">00:15 - Движение обнаружено</div>
@@ -496,6 +613,11 @@ const Index = () => {
                   {audioPlaying && selectedCamera?.id === 'CAM-03' && (
                     <div className="text-vhs-red animate-pulse font-bold">
                       &gt;&gt;&gt; АУДИО В ПРЯМОМ ЭФИРЕ &lt;&lt;&lt;
+                    </div>
+                  )}
+                  {audioPlaying && selectedCamera?.id === 'CAM-05' && (
+                    <div className="text-vhs-red animate-pulse font-bold">
+                      &gt;&gt;&gt; КРИКИ И РАЗРЫВАНИЕ В ПРЯМОМ ЭФИРЕ &lt;&lt;&lt;
                     </div>
                   )}
                 </CardContent>
