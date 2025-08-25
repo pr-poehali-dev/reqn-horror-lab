@@ -3,11 +3,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 
 const Index = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [glitchActive, setGlitchActive] = useState(false);
+  const [selectedCamera, setSelectedCamera] = useState<any>(null);
+  const [cameraDialogOpen, setCameraDialogOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,12 +40,17 @@ const Index = () => {
     });
   };
 
+  const openCamera = (camera: any) => {
+    setSelectedCamera(camera);
+    setCameraDialogOpen(true);
+  };
+
   const cameras = [
-    { id: 'CAM-01', location: 'Лаборатория А', status: 'ONLINE', feed: 'img/eb75ae17-3e30-47b6-a921-f69303b8c306.jpg' },
-    { id: 'CAM-02', location: 'Комната содержания', status: 'ONLINE', feed: 'img/5033c22d-cfc4-451a-9cbf-d452a8ae50d1.jpg' },
-    { id: 'CAM-03', location: 'Коридор Б', status: 'OFFLINE', feed: null },
-    { id: 'CAM-04', location: 'Хранилище', status: 'ERROR', feed: null },
-    { id: 'CAM-05', location: 'Испытательная камера', status: 'ONLINE', feed: 'https://cdn.poehali.dev/files/f317b2ac-fec7-4fa2-9b78-655d91a0f390.jpg' }
+    { id: 'CAM-01', location: 'Лаборатория А', status: 'ONLINE', feed: 'img/eb75ae17-3e30-47b6-a921-f69303b8c306.jpg', description: 'Основная исследовательская зона. Мониторинг экспериментов.', lastActivity: '23:42' },
+    { id: 'CAM-02', location: 'Комната содержания', status: 'ONLINE', feed: 'img/5033c22d-cfc4-451a-9cbf-d452a8ae50d1.jpg', description: 'Зона хранения активных образцов. Повышенная безопасность.', lastActivity: '02:15' },
+    { id: 'CAM-03', location: 'Коридор Б', status: 'OFFLINE', feed: null, description: 'Соединительный коридор. Связь потеряна 6 часов назад.', lastActivity: '18:33' },
+    { id: 'CAM-04', location: 'Хранилище', status: 'ERROR', feed: null, description: 'Архивное хранилище. ОШИБКА СИСТЕМЫ.', lastActivity: 'НЕИЗВЕСТНО' },
+    { id: 'CAM-05', location: 'Испытательная камера', status: 'ONLINE', feed: 'https://cdn.poehali.dev/files/f317b2ac-fec7-4fa2-9b78-655d91a0f390.jpg', description: 'Тестирование поведения образца RQ-23. Активен.', lastActivity: '00:15' }
   ];
 
   const incidents = [
@@ -139,6 +147,7 @@ const Index = () => {
                     <Button 
                       className="w-full bg-vhs-green text-vhs-black hover:bg-vhs-white"
                       disabled={camera.status !== 'ONLINE'}
+                      onClick={() => openCamera(camera)}
                     >
                       ДОСТУП
                     </Button>
@@ -296,6 +305,152 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Camera Detail Dialog */}
+      <Dialog open={cameraDialogOpen} onOpenChange={setCameraDialogOpen}>
+        <DialogContent className="bg-vhs-black border-vhs-green text-vhs-green max-w-4xl font-vhs">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-mono flex items-center gap-3">
+              <Icon name="Camera" size={24} />
+              {selectedCamera?.id} - {selectedCamera?.location}
+              <Badge 
+                variant={selectedCamera?.status === 'ONLINE' ? 'default' : 'destructive'}
+                className={selectedCamera?.status === 'ONLINE' ? 'bg-vhs-green text-vhs-black' : 'bg-vhs-red text-vhs-white'}
+              >
+                {selectedCamera?.status}
+              </Badge>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Camera Feed */}
+            <div className="lg:col-span-2">
+              <div className="relative aspect-video bg-vhs-gray overflow-hidden mb-4 border border-vhs-green">
+                {selectedCamera?.feed ? (
+                  <img 
+                    src={selectedCamera.feed} 
+                    alt={`Camera ${selectedCamera.id}`}
+                    className={`w-full h-full object-cover filter contrast-125 brightness-90 ${
+                      glitchActive ? 'animate-glitch' : ''
+                    }`}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-vhs-red">
+                    <div className="text-center">
+                      <Icon name="AlertTriangle" size={64} className="mx-auto mb-2" />
+                      <p>СИГНАЛ ПОТЕРЯН</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* HUD Overlay */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-4 left-4 space-y-1 text-xs">
+                    <div className="bg-vhs-black bg-opacity-70 px-2 py-1">
+                      REC ● {formatTime(currentTime)}
+                    </div>
+                    <div className="bg-vhs-black bg-opacity-70 px-2 py-1">
+                      {selectedCamera?.id} | {selectedCamera?.location}
+                    </div>
+                  </div>
+                  
+                  <div className="absolute top-4 right-4 text-xs">
+                    <div className="bg-vhs-black bg-opacity-70 px-2 py-1">
+                      ZOOM: 1.0x
+                    </div>
+                  </div>
+                  
+                  <div className="absolute bottom-4 left-4 text-xs">
+                    <div className="bg-vhs-black bg-opacity-70 px-2 py-1">
+                      ПОСЛЕДНЯЯ АКТИВНОСТЬ: {selectedCamera?.lastActivity}
+                    </div>
+                  </div>
+                  
+                  {/* Crosshairs */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-8 h-8 border border-vhs-green border-opacity-50">
+                      <div className="absolute top-1/2 left-0 w-full h-px bg-vhs-green opacity-30"></div>
+                      <div className="absolute left-1/2 top-0 w-px h-full bg-vhs-green opacity-30"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Controls */}
+              <div className="grid grid-cols-4 gap-2">
+                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                  <Icon name="ZoomIn" size={16} />
+                </Button>
+                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                  <Icon name="ZoomOut" size={16} />
+                </Button>
+                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                  <Icon name="RotateCcw" size={16} />
+                </Button>
+                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                  <Icon name="Download" size={16} />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Camera Info */}
+            <div className="space-y-4">
+              <Card className="bg-vhs-black border-vhs-green">
+                <CardHeader className="pb-2">
+                  <h3 className="font-mono text-sm">ИНФОРМАЦИЯ</h3>
+                </CardHeader>
+                <CardContent className="text-xs space-y-2">
+                  <div>
+                    <span className="opacity-70">ID:</span> {selectedCamera?.id}
+                  </div>
+                  <div>
+                    <span className="opacity-70">Локация:</span> {selectedCamera?.location}
+                  </div>
+                  <div>
+                    <span className="opacity-70">Статус:</span> {selectedCamera?.status}
+                  </div>
+                  <div>
+                    <span className="opacity-70">Описание:</span> {selectedCamera?.description}
+                  </div>
+                  <div>
+                    <span className="opacity-70">Последняя активность:</span> {selectedCamera?.lastActivity}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-vhs-black border-vhs-green">
+                <CardHeader className="pb-2">
+                  <h3 className="font-mono text-sm">ЖУРНАЛ СОБЫТИЙ</h3>
+                </CardHeader>
+                <CardContent className="text-xs space-y-1">
+                  <div className="opacity-70">00:15 - Движение обнаружено</div>
+                  <div className="opacity-70">23:42 - Активность прекращена</div>
+                  <div className="opacity-70">22:18 - Свет выключен</div>
+                  <div className="text-vhs-red">21:33 - Аномальный звук</div>
+                  <div className="opacity-70">20:15 - Система активна</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-vhs-black border-vhs-green">
+                <CardHeader className="pb-2">
+                  <h3 className="font-mono text-sm">НАСТРОЙКИ</h3>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <Button variant="outline" size="sm" className="w-full border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black text-xs">
+                    ЗАПИСЬ
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black text-xs">
+                    УВЕДОМЛЕНИЯ
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full border-vhs-red text-vhs-red hover:bg-vhs-red hover:text-vhs-white text-xs">
+                    ОТКЛЮЧИТЬ
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
