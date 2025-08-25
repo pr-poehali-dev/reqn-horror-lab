@@ -11,6 +11,7 @@ const Index = () => {
   const [glitchActive, setGlitchActive] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState<any>(null);
   const [cameraDialogOpen, setCameraDialogOpen] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -40,15 +41,67 @@ const Index = () => {
     });
   };
 
+  const playCreepyAudio = () => {
+    setAudioPlaying(true);
+    
+    // Создаем звуковой эффект "поедания" через Web Audio API
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    // Последовательность звуков: хрустящие, жевательные, глотательные
+    const playSound = (frequency: number, duration: number, type: OscillatorType, delay: number) => {
+      setTimeout(() => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      }, delay);
+    };
+    
+    // Хрустящие звуки (кости)
+    playSound(200, 0.3, 'square', 0);
+    playSound(180, 0.2, 'square', 300);
+    playSound(220, 0.4, 'square', 600);
+    
+    // Жевательные звуки
+    playSound(100, 0.8, 'sawtooth', 1000);
+    playSound(90, 0.6, 'sawtooth', 1500);
+    
+    // Глотательные звуки
+    playSound(50, 1.2, 'sine', 2200);
+    
+    // Тишина и последний хруст
+    playSound(150, 0.5, 'square', 4000);
+    
+    setTimeout(() => setAudioPlaying(false), 5000);
+  };
+
   const openCamera = (camera: any) => {
     setSelectedCamera(camera);
     setCameraDialogOpen(true);
+    
+    // Если открывается CAM-03, проигрываем жуткий звук
+    if (camera.id === 'CAM-03') {
+      setTimeout(() => {
+        playCreepyAudio();
+      }, 1500);
+    }
   };
 
   const cameras = [
     { id: 'CAM-01', location: 'Лаборатория А', status: 'ONLINE', feed: 'img/eb75ae17-3e30-47b6-a921-f69303b8c306.jpg', description: 'Основная исследовательская зона. Мониторинг экспериментов.', lastActivity: '23:42' },
     { id: 'CAM-02', location: 'Комната содержания', status: 'ONLINE', feed: 'img/5033c22d-cfc4-451a-9cbf-d452a8ae50d1.jpg', description: 'Зона хранения активных образцов. Повышенная безопасность.', lastActivity: '02:15' },
-    { id: 'CAM-03', location: 'Коридор Б', status: 'OFFLINE', feed: null, description: 'Соединительный коридор. Связь потеряна 6 часов назад.', lastActivity: '18:33' },
+    { id: 'CAM-03', location: 'Коридор Б', status: 'OFFLINE', feed: null, description: 'Соединительный коридор. ВНИМАНИЕ: Зафиксированы подозрительные звуки.', lastActivity: '18:33' },
     { id: 'CAM-04', location: 'Хранилище', status: 'ERROR', feed: null, description: 'Архивное хранилище. ОШИБКА СИСТЕМЫ.', lastActivity: 'НЕИЗВЕСТНО' },
     { id: 'CAM-05', location: 'Испытательная камера', status: 'ONLINE', feed: 'https://cdn.poehali.dev/files/f317b2ac-fec7-4fa2-9b78-655d91a0f390.jpg', description: 'Тестирование поведения образца RQ-23. Активен.', lastActivity: '00:15' }
   ];
@@ -423,11 +476,28 @@ const Index = () => {
                   <h3 className="font-mono text-sm">ЖУРНАЛ СОБЫТИЙ</h3>
                 </CardHeader>
                 <CardContent className="text-xs space-y-1">
-                  <div className="opacity-70">00:15 - Движение обнаружено</div>
-                  <div className="opacity-70">23:42 - Активность прекращена</div>
-                  <div className="opacity-70">22:18 - Свет выключен</div>
-                  <div className="text-vhs-red">21:33 - Аномальный звук</div>
-                  <div className="opacity-70">20:15 - Система активна</div>
+                  {selectedCamera?.id === 'CAM-03' ? (
+                    <>
+                      <div className="text-vhs-red animate-pulse">18:45 - АУДИО: Хрустящие звуки</div>
+                      <div className="text-vhs-red animate-pulse">18:42 - АУДИО: Жевательные движения</div>
+                      <div className="text-vhs-red">18:40 - ПОТЕРЯ СИГНАЛА</div>
+                      <div className="text-vhs-red">18:33 - Последний кадр: тень в коридоре</div>
+                      <div className="opacity-70">18:30 - Освещение норма</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="opacity-70">00:15 - Движение обнаружено</div>
+                      <div className="opacity-70">23:42 - Активность прекращена</div>
+                      <div className="opacity-70">22:18 - Свет выключен</div>
+                      <div className="text-vhs-red">21:33 - Аномальный звук</div>
+                      <div className="opacity-70">20:15 - Система активна</div>
+                    </>
+                  )}
+                  {audioPlaying && selectedCamera?.id === 'CAM-03' && (
+                    <div className="text-vhs-red animate-pulse font-bold">
+                      >>> АУДИО В ПРЯМОМ ЭФИРЕ <<<
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               
