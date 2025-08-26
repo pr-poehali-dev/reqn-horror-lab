@@ -21,7 +21,8 @@ export default {
 			colors: {
 				vhs: {
 					red: '#FF0000',
-					green: '#00FF00',
+					crimson: '#DC143C',
+					darkred: '#8B0000',
 					gray: '#808080',
 					white: '#FFFFFF',
 					black: '#000000'
@@ -97,6 +98,13 @@ export default {
 					'0%': { transform: 'translateY(-100%)' },
 					'100%': { transform: 'translateY(100vh)' }
 				},
+				'rotate-camera': {
+					'0%': { transform: 'rotate(0deg)' },
+					'25%': { transform: 'rotate(-15deg)' },
+					'50%': { transform: 'rotate(0deg)' },
+					'75%': { transform: 'rotate(15deg)' },
+					'100%': { transform: 'rotate(0deg)' }
+				},
 				'accordion-down': {
 					from: {
 						height: '0'
@@ -119,7 +127,8 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'glitch': 'glitch 0.3s ease-in-out infinite alternate',
 				'static': 'static 0.1s linear infinite',
-				'scanline': 'scanline 2s linear infinite'
+				'scanline': 'scanline 2s linear infinite',
+				'rotate-camera': 'rotate-camera 20s linear infinite'
 			}
 		}
 	},

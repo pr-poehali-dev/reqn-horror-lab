@@ -266,28 +266,28 @@ const Index = () => {
   // Экран авторизации
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-vhs-black text-vhs-green font-vhs flex items-center justify-center">
+      <div className="min-h-screen bg-vhs-black text-vhs-white font-vhs flex items-center justify-center">
         {/* Scanline effect */}
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute w-full h-0.5 bg-vhs-green opacity-20 animate-scanline"></div>
+          <div className="absolute w-full h-0.5 bg-vhs-crimson opacity-30 animate-scanline"></div>
         </div>
 
         {/* Static overlay */}
         <div className={`fixed inset-0 pointer-events-none transition-opacity duration-100 ${
           glitchActive ? 'opacity-10' : 'opacity-5'
         }`}>
-          <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJzdGF0aWMiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgogICAgICA8Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMC41IiBmaWxsPSIjMDBGRjAwIiBvcGFjaXR5PSIwLjEiLz4KICAgIDwvcGF0dGVybj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9InVybCgjc3RhdGljKSIvPgo8L3N2Zz4K')] animate-static"></div>
+          <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJzdGF0aWMiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgogICAgICA8Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMC41IiBmaWxsPSIjREMxNDNDIiBvcGFjaXR5PSIwLjEiLz4KICAgIDwvcGF0dGVybj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9InVybCgjc3RhdGljKSIvPgo8L3N2Zz4K')] animate-static"></div>
         </div>
 
-        <Card className="w-full max-w-md bg-vhs-black border-vhs-green">
+        <Card className="w-full max-w-md bg-vhs-black border-vhs-crimson">
           <CardHeader className="text-center pb-2">
             <div className={`mb-4 ${glitchActive ? 'animate-glitch' : ''}`}>
               <h1 className="text-3xl font-bold mb-2">REQN CO</h1>
               <h2 className="text-xl">LABORATORY</h2>
               <div className="text-xs opacity-70 mt-2">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</div>
             </div>
-            <div className="border-t border-vhs-green pt-4">
-              <Icon name="Shield" size={32} className="mx-auto mb-2" />
+            <div className="border-t border-vhs-crimson pt-4">
+              <Icon name="Shield" size={32} className="mx-auto mb-2 text-vhs-crimson" />
               <h3 className="text-lg font-mono">АВТОРИЗАЦИЯ ПЕРСОНАЛА</h3>
             </div>
           </CardHeader>
@@ -300,7 +300,7 @@ const Index = () => {
                 value={employeeName}
                 onChange={(e) => setEmployeeName(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="bg-vhs-black border-vhs-green text-vhs-green placeholder-vhs-gray focus:border-vhs-white mt-1 font-mono"
+                className="bg-vhs-black border-vhs-crimson text-vhs-white placeholder-vhs-gray focus:border-vhs-red mt-1 font-mono"
                 placeholder="Введите ваше имя"
               />
             </div>
@@ -313,7 +313,7 @@ const Index = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="bg-vhs-black border-vhs-green text-vhs-green placeholder-vhs-gray focus:border-vhs-white mt-1 font-mono"
+                className="bg-vhs-black border-vhs-crimson text-vhs-white placeholder-vhs-gray focus:border-vhs-red mt-1 font-mono"
                 placeholder="••••••••"
               />
             </div>
@@ -326,7 +326,7 @@ const Index = () => {
 
             <Button 
               onClick={handleLogin}
-              className="w-full bg-vhs-green text-vhs-black hover:bg-vhs-white font-mono"
+              className="w-full bg-vhs-crimson text-vhs-white hover:bg-vhs-darkred font-mono"
             >
               ВОЙТИ В СИСТЕМУ
             </Button>
@@ -336,7 +336,7 @@ const Index = () => {
               <div className="text-vhs-red">⚠ НЕСАНКЦИОНИРОВАННЫЙ ДОСТУП ЗАПРЕЩЕН</div>
             </div>
 
-            <div className="border-t border-vhs-green pt-2 text-xs opacity-40">
+            <div className="border-t border-vhs-crimson pt-2 text-xs opacity-40">
               <div className="text-center">
                 <div>Тестовые данные:</div>
                 <div>Dr. Petrov / reqn2024</div>
@@ -350,21 +350,21 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-vhs-black text-vhs-green font-vhs">
+    <div className="min-h-screen bg-vhs-black text-vhs-white font-vhs">
       {/* Scanline effect */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute w-full h-0.5 bg-vhs-green opacity-20 animate-scanline"></div>
+        <div className="absolute w-full h-0.5 bg-vhs-crimson opacity-30 animate-scanline"></div>
       </div>
 
       {/* Static overlay */}
       <div className={`fixed inset-0 pointer-events-none transition-opacity duration-100 ${
         glitchActive ? 'opacity-10' : 'opacity-5'
       }`}>
-        <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJzdGF0aWMiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgogICAgICA8Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMC41IiBmaWxsPSIjMDBGRjAwIiBvcGFjaXR5PSIwLjEiLz4KICAgIDwvcGF0dGVybj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9InVybCgjc3RhdGljKSIvPgo8L3N2Zz4K')] animate-static"></div>
+        <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJzdGF0aWMiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgogICAgICA8Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMC41IiBmaWxsPSIjREMxNDNDIiBvcGFjaXR5PSIwLjEiLz4KICAgIDwvcGF0dGVybj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9InVybCgjc3RhdGljKSIvPgo8L3N2Zz4K')] animate-static"></div>
       </div>
 
       {/* Header */}
-      <header className="border-b border-vhs-green p-4">
+      <header className="border-b border-vhs-crimson p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className={`transition-transform duration-100 ${glitchActive ? 'animate-glitch' : ''}`}>
             <h1 className="text-3xl font-bold">REQN CO LABORATORY</h1>
@@ -373,7 +373,7 @@ const Index = () => {
           <div className="text-right">
             <div className="text-xl font-mono">{formatTime(currentTime)}</div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-vhs-green text-vhs-green">
+              <Badge variant="outline" className="border-vhs-crimson text-vhs-crimson">
                 СИСТЕМА АКТИВНА
               </Badge>
             </div>
@@ -383,26 +383,26 @@ const Index = () => {
 
       <div className="max-w-7xl mx-auto p-4">
         <Tabs defaultValue="cameras" className="w-full">
-          <TabsList className="grid grid-cols-6 w-full mb-6 bg-vhs-black border border-vhs-green">
-            <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-green data-[state=active]:text-vhs-black">КАМЕРЫ</TabsTrigger>
-            <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-green data-[state=active]:text-vhs-black">ИНЦИДЕНТЫ</TabsTrigger>
-            <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-green data-[state=active]:text-vhs-black">ОБРАЗЦЫ</TabsTrigger>
-            <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-green data-[state=active]:text-vhs-black">АРХИВ</TabsTrigger>
-            <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-green data-[state=active]:text-vhs-black">ДОКУМЕНТЫ</TabsTrigger>
-            <TabsTrigger value="status" className="data-[state=active]:bg-vhs-green data-[state=active]:text-vhs-black">СТАТУС</TabsTrigger>
+          <TabsList className="grid grid-cols-6 w-full mb-6 bg-vhs-black border border-vhs-crimson">
+            <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">КАМЕРЫ</TabsTrigger>
+            <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ИНЦИДЕНТЫ</TabsTrigger>
+            <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ОБРАЗЦЫ</TabsTrigger>
+            <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">АРХИВ</TabsTrigger>
+            <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ДОКУМЕНТЫ</TabsTrigger>
+            <TabsTrigger value="status" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">СТАТУС</TabsTrigger>
           </TabsList>
 
           {/* Cameras Tab */}
           <TabsContent value="cameras">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {cameras.map((camera) => (
-                <Card key={camera.id} className="bg-vhs-black border-vhs-green">
+                <Card key={camera.id} className="bg-vhs-black border-vhs-crimson">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-center">
                       <h3 className="font-mono text-lg">{camera.id}</h3>
                       <Badge 
                         variant={camera.status === 'ONLINE' ? 'default' : 'destructive'}
-                        className={camera.status === 'ONLINE' ? 'bg-vhs-green text-vhs-black' : 'bg-vhs-red text-vhs-white'}
+                        className={camera.status === 'ONLINE' ? 'bg-vhs-crimson text-vhs-white' : 'bg-vhs-red text-vhs-white'}
                       >
                         {camera.status}
                       </Badge>
@@ -429,7 +429,7 @@ const Index = () => {
                       </div>
                     </div>
                     <Button 
-                      className="w-full bg-vhs-green text-vhs-black hover:bg-vhs-white"
+                      className="w-full bg-vhs-crimson text-vhs-white hover:bg-vhs-darkred"
                       disabled={camera.status !== 'ONLINE'}
                       onClick={() => openCamera(camera)}
                     >
@@ -445,7 +445,7 @@ const Index = () => {
           <TabsContent value="incidents">
             <div className="space-y-3">
               {incidents.map((incident) => (
-                <Card key={incident.id} className="bg-vhs-black border-vhs-green">
+                <Card key={incident.id} className="bg-vhs-black border-vhs-crimson">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
@@ -456,7 +456,7 @@ const Index = () => {
                             className={
                               incident.severity === 'CRITICAL' ? 'bg-vhs-red text-vhs-white animate-pulse' :
                               incident.severity === 'HIGH' ? 'bg-vhs-red text-vhs-white' :
-                              'bg-vhs-green text-vhs-black'
+                              'bg-vhs-crimson text-vhs-white'
                             }
                           >
                             {incident.severity}
@@ -465,7 +465,7 @@ const Index = () => {
                         </div>
                         <p>{incident.description}</p>
                       </div>
-                      <Button variant="outline" size="sm" className="border-vhs-green text-vhs-green">
+                      <Button variant="outline" size="sm" className="border-vhs-crimson text-vhs-white">
                         <Icon name="Eye" size={16} />
                       </Button>
                     </div>
@@ -479,7 +479,7 @@ const Index = () => {
           <TabsContent value="specimens">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {specimens.map((specimen) => (
-                <Card key={specimen.id} className="bg-vhs-black border-vhs-green">
+                <Card key={specimen.id} className="bg-vhs-black border-vhs-crimson">
                   <CardHeader>
                     <div className="flex justify-between items-center">
                       <h3 className="font-mono">{specimen.id}</h3>
@@ -487,7 +487,7 @@ const Index = () => {
                         variant={specimen.status === 'MISSING' ? 'destructive' : 'default'}
                         className={
                           specimen.status === 'MISSING' ? 'bg-vhs-red text-vhs-white animate-pulse' :
-                          specimen.status === 'ACTIVE' ? 'bg-vhs-green text-vhs-black' :
+                          specimen.status === 'ACTIVE' ? 'bg-vhs-crimson text-vhs-white' :
                           'bg-vhs-gray text-vhs-white'
                         }
                       >
@@ -504,7 +504,7 @@ const Index = () => {
                         className={
                           specimen.threat === 'HIGH' ? 'bg-vhs-red text-vhs-white' :
                           specimen.threat === 'MEDIUM' ? 'bg-yellow-500 text-vhs-black' :
-                          'bg-vhs-green text-vhs-black'
+                          'bg-vhs-crimson text-vhs-white'
                         }
                       >
                         {specimen.threat}
@@ -518,12 +518,12 @@ const Index = () => {
 
           {/* Archive Tab */}
           <TabsContent value="archive">
-            <Card className="bg-vhs-black border-vhs-green">
+            <Card className="bg-vhs-black border-vhs-crimson">
               <CardContent className="p-8 text-center">
                 <Icon name="FileText" size={64} className="mx-auto mb-4 opacity-50" />
                 <h3 className="text-xl mb-2">АРХИВ ЗАПИСЕЙ</h3>
                 <p className="opacity-70">Доступ к архивным записям требует авторизации уровня 3</p>
-                <Button className="mt-4 bg-vhs-green text-vhs-black hover:bg-vhs-white">
+                <Button className="mt-4 bg-vhs-crimson text-vhs-white hover:bg-vhs-darkred">
                   ЗАПРОСИТЬ ДОСТУП
                 </Button>
               </CardContent>
@@ -532,7 +532,7 @@ const Index = () => {
 
           {/* Documents Tab */}
           <TabsContent value="documents">
-            <Card className="bg-vhs-black border-vhs-green">
+            <Card className="bg-vhs-black border-vhs-crimson">
               <CardContent className="p-8 text-center">
                 <Icon name="Lock" size={64} className="mx-auto mb-4 opacity-50" />
                 <h3 className="text-xl mb-2">СЕКРЕТНЫЕ ДОКУМЕНТЫ</h3>
@@ -547,7 +547,7 @@ const Index = () => {
           {/* Status Tab */}
           <TabsContent value="status">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-vhs-black border-vhs-green">
+              <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader>
                   <h3 className="flex items-center gap-2">
                     <Icon name="Wifi" size={20} />
@@ -557,7 +557,7 @@ const Index = () => {
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
                     <span>Камеры онлайн:</span>
-                    <span className="text-vhs-green">3/5</span>
+                    <span className="text-vhs-white">3/5</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Активные инциденты:</span>
@@ -570,7 +570,7 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-vhs-black border-vhs-green">
+              <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader>
                   <h3 className="flex items-center gap-2">
                     <Icon name="AlertTriangle" size={20} />
@@ -592,14 +592,14 @@ const Index = () => {
 
       {/* Camera Detail Dialog */}
       <Dialog open={cameraDialogOpen} onOpenChange={setCameraDialogOpen}>
-        <DialogContent className="bg-vhs-black border-vhs-green text-vhs-green max-w-4xl font-vhs">
+        <DialogContent className="bg-vhs-black border-vhs-crimson text-vhs-white max-w-4xl font-vhs">
           <DialogHeader>
             <DialogTitle className="text-2xl font-mono flex items-center gap-3">
-              <Icon name="Camera" size={24} />
+              <Icon name="Camera" size={24} className="animate-rotate-camera text-vhs-crimson" />
               {selectedCamera?.id} - {selectedCamera?.location}
               <Badge 
                 variant={selectedCamera?.status === 'ONLINE' ? 'default' : 'destructive'}
-                className={selectedCamera?.status === 'ONLINE' ? 'bg-vhs-green text-vhs-black' : 'bg-vhs-red text-vhs-white'}
+                className={selectedCamera?.status === 'ONLINE' ? 'bg-vhs-crimson text-vhs-white' : 'bg-vhs-red text-vhs-white'}
               >
                 {selectedCamera?.status}
               </Badge>
@@ -609,7 +609,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Camera Feed */}
             <div className="lg:col-span-2">
-              <div className="relative aspect-video bg-vhs-gray overflow-hidden mb-4 border border-vhs-green">
+              <div className="relative aspect-video bg-vhs-gray overflow-hidden mb-4 border border-vhs-crimson">
                 {selectedCamera?.feed ? (
                   <img 
                     src={selectedCamera.feed} 
@@ -652,9 +652,9 @@ const Index = () => {
                   
                   {/* Crosshairs */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-8 h-8 border border-vhs-green border-opacity-50">
-                      <div className="absolute top-1/2 left-0 w-full h-px bg-vhs-green opacity-30"></div>
-                      <div className="absolute left-1/2 top-0 w-px h-full bg-vhs-green opacity-30"></div>
+                    <div className="w-8 h-8 border border-vhs-crimson border-opacity-50">
+                      <div className="absolute top-1/2 left-0 w-full h-px bg-vhs-crimson opacity-30"></div>
+                      <div className="absolute left-1/2 top-0 w-px h-full bg-vhs-crimson opacity-30"></div>
                     </div>
                   </div>
                 </div>
@@ -662,16 +662,16 @@ const Index = () => {
               
               {/* Controls */}
               <div className="grid grid-cols-4 gap-2">
-                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                <Button variant="outline" className="border-vhs-crimson text-vhs-crimson hover:bg-vhs-crimson hover:text-vhs-white">
                   <Icon name="ZoomIn" size={16} />
                 </Button>
-                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                <Button variant="outline" className="border-vhs-crimson text-vhs-crimson hover:bg-vhs-crimson hover:text-vhs-white">
                   <Icon name="ZoomOut" size={16} />
                 </Button>
-                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                <Button variant="outline" className="border-vhs-crimson text-vhs-crimson hover:bg-vhs-crimson hover:text-vhs-white">
                   <Icon name="RotateCcw" size={16} />
                 </Button>
-                <Button variant="outline" className="border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black">
+                <Button variant="outline" className="border-vhs-crimson text-vhs-crimson hover:bg-vhs-crimson hover:text-vhs-white">
                   <Icon name="Download" size={16} />
                 </Button>
               </div>
@@ -679,7 +679,7 @@ const Index = () => {
             
             {/* Camera Info */}
             <div className="space-y-4">
-              <Card className="bg-vhs-black border-vhs-green">
+              <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader className="pb-2">
                   <h3 className="font-mono text-sm">ИНФОРМАЦИЯ</h3>
                 </CardHeader>
@@ -702,7 +702,7 @@ const Index = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-vhs-black border-vhs-green">
+              <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader className="pb-2">
                   <h3 className="font-mono text-sm">ЖУРНАЛ СОБЫТИЙ</h3>
                 </CardHeader>
@@ -745,15 +745,15 @@ const Index = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-vhs-black border-vhs-green">
+              <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader className="pb-2">
                   <h3 className="font-mono text-sm">НАСТРОЙКИ</h3>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="outline" size="sm" className="w-full border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black text-xs">
+                  <Button variant="outline" size="sm" className="w-full border-vhs-crimson text-vhs-white hover:bg-vhs-crimson hover:text-vhs-black text-xs">
                     ЗАПИСЬ
                   </Button>
-                  <Button variant="outline" size="sm" className="w-full border-vhs-green text-vhs-green hover:bg-vhs-green hover:text-vhs-black text-xs">
+                  <Button variant="outline" size="sm" className="w-full border-vhs-crimson text-vhs-white hover:bg-vhs-crimson hover:text-vhs-black text-xs">
                     УВЕДОМЛЕНИЯ
                   </Button>
                   <Button variant="outline" size="sm" className="w-full border-vhs-red text-vhs-red hover:bg-vhs-red hover:text-vhs-white text-xs">
