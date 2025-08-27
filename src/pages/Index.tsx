@@ -257,11 +257,20 @@ const Index = () => {
     { id: 'INC-003', time: '01:58:12', severity: 'MEDIUM', description: 'Аномальные звуки в комнате содержания' }
   ];
 
-  const specimens = [
-    { id: 'RQ-23', name: 'Плюшевый мишка', status: 'CONTAINED', threat: 'LOW' },
-    { id: 'RQ-47', name: 'Кукла "Анна"', status: 'MISSING', threat: 'HIGH' },
-    { id: 'RQ-81', name: 'Игрушечный робот', status: 'ACTIVE', threat: 'MEDIUM' }
-  ];
+  const experiments = {
+    lower: [
+      { id: 'EXP-001', name: 'Изучение света', status: 'ACTIVE', description: 'Безопасный эксперимент с оптикой' },
+      { id: 'EXP-002', name: 'Температурные тесты', status: 'COMPLETED', description: 'Измерение теплопроводности' }
+    ],
+    mediumness: [
+      { id: 'EXP-047', name: 'Тест психики', status: 'RUNNING', description: 'Воздействие на подсознание' },
+      { id: 'EXP-081', name: 'Генетический анализ', status: 'PAUSED', description: 'Модификация ДНК образцов' }
+    ],
+    dangerer: [
+      { id: 'EXP-666', name: 'Проект Тёмная Материя', status: 'CLASSIFIED', description: 'ДОСТУП ОГРАНИЧЕН' },
+      { id: 'EXP-999', name: 'Портал в неизвестное', status: 'TERMINATED', description: 'Эксперимент прерван' }
+    ]
+  };
 
   // Экран авторизации
   if (!isAuthenticated) {
@@ -386,7 +395,7 @@ const Index = () => {
           <TabsList className="grid grid-cols-6 w-full mb-6 bg-vhs-black border border-vhs-crimson">
             <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">КАМЕРЫ</TabsTrigger>
             <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ИНЦИДЕНТЫ</TabsTrigger>
-            <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ОБРАЗЦЫ</TabsTrigger>
+            <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ЭКСПЕРИМЕНТЫ</TabsTrigger>
             <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">АРХИВ</TabsTrigger>
             <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ДОКУМЕНТЫ</TabsTrigger>
             <TabsTrigger value="status" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">СТАТУС</TabsTrigger>
@@ -475,44 +484,87 @@ const Index = () => {
             </div>
           </TabsContent>
 
-          {/* Specimens Tab */}
+          {/* Experiments Tab */}
           <TabsContent value="specimens">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {specimens.map((specimen) => (
-                <Card key={specimen.id} className="bg-vhs-black border-vhs-crimson">
-                  <CardHeader>
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-mono">{specimen.id}</h3>
-                      <Badge 
-                        variant={specimen.status === 'MISSING' ? 'destructive' : 'default'}
-                        className={
-                          specimen.status === 'MISSING' ? 'bg-vhs-red text-vhs-white animate-pulse' :
-                          specimen.status === 'ACTIVE' ? 'bg-vhs-crimson text-vhs-white' :
-                          'bg-vhs-gray text-vhs-white'
-                        }
-                      >
-                        {specimen.status}
-                      </Badge>
-                    </div>
-                    <p className="text-sm">{specimen.name}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Уровень угрозы:</span>
-                      <Badge 
-                        variant={specimen.threat === 'HIGH' ? 'destructive' : 'default'}
-                        className={
-                          specimen.threat === 'HIGH' ? 'bg-vhs-red text-vhs-white' :
-                          specimen.threat === 'MEDIUM' ? 'bg-yellow-500 text-vhs-black' :
-                          'bg-vhs-crimson text-vhs-white'
-                        }
-                      >
-                        {specimen.threat}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="space-y-6">
+              {/* Lower - Safest */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-mono text-vhs-crimson flex items-center gap-2">
+                  <Icon name="Shield" size={18} className="text-green-400" />
+                  LOWER - Безопасные эксперименты
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {experiments.lower.map((experiment) => (
+                    <Card key={experiment.id} className="bg-vhs-black border-green-400">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-mono text-sm">{experiment.id}</h4>
+                          <Badge className="bg-green-400 text-vhs-black">
+                            {experiment.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-semibold">{experiment.name}</p>
+                        <p className="text-xs text-gray-300">{experiment.description}</p>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mediumness - Medium Danger */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-mono text-vhs-crimson flex items-center gap-2">
+                  <Icon name="AlertTriangle" size={18} className="text-yellow-400" />
+                  MEDIUMNESS - Средняя опасность
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {experiments.mediumness.map((experiment) => (
+                    <Card key={experiment.id} className="bg-vhs-black border-yellow-400">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-mono text-sm">{experiment.id}</h4>
+                          <Badge className={
+                            experiment.status === 'RUNNING' ? 'bg-yellow-400 text-vhs-black animate-pulse' :
+                            'bg-yellow-400 text-vhs-black'
+                          }>
+                            {experiment.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-semibold">{experiment.name}</p>
+                        <p className="text-xs text-gray-300">{experiment.description}</p>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dangerer - Most Dangerous */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-mono text-vhs-crimson flex items-center gap-2">
+                  <Icon name="Skull" size={18} className="text-vhs-red animate-pulse" />
+                  DANGERER - Крайне опасные эксперименты
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {experiments.dangerer.map((experiment) => (
+                    <Card key={experiment.id} className="bg-vhs-black border-vhs-red">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-mono text-sm">{experiment.id}</h4>
+                          <Badge className={
+                            experiment.status === 'CLASSIFIED' ? 'bg-vhs-red text-vhs-white animate-pulse' :
+                            experiment.status === 'TERMINATED' ? 'bg-gray-600 text-vhs-white' :
+                            'bg-vhs-red text-vhs-white'
+                          }>
+                            {experiment.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-semibold">{experiment.name}</p>
+                        <p className="text-xs text-gray-300">{experiment.description}</p>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </div>
           </TabsContent>
 
@@ -564,8 +616,8 @@ const Index = () => {
                     <span className="text-vhs-red">3</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Образцы под контролем:</span>
-                    <span className="text-yellow-500">2/3</span>
+                    <span>Эксперименты активны:</span>
+                    <span className="text-yellow-500">3/6</span>
                   </div>
                 </CardContent>
               </Card>
@@ -579,7 +631,7 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div className="text-vhs-red animate-pulse">⚠ Образец RQ-47 отсутствует</div>
+                    <div className="text-vhs-red animate-pulse">⚠ Эксперимент EXP-666 засекречен</div>
                     <div className="text-yellow-500">⚠ Камера CAM-03 офлайн</div>
                     <div className="text-vhs-red">⚠ Обнаружена аномальная активность</div>
                   </div>
