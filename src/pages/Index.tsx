@@ -489,7 +489,7 @@ const Index = () => {
             <div className="space-y-6">
               {/* Lower - Safest */}
               <div className="space-y-3">
-                <h3 className="text-lg font-mono text-vhs-crimson flex items-center gap-2">
+                <h3 className="text-lg font-mono flex items-center gap-2 text-[#db14b5]">
                   <Icon name="Shield" size={18} className="text-green-400" />
                   LOWER - Безопасные эксперименты
                 </h3>
@@ -498,12 +498,12 @@ const Index = () => {
                     <Card key={experiment.id} className="bg-vhs-black border-green-400">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm">{experiment.id}</h4>
+                          <h4 className="font-mono text-sm text-slate-50">{experiment.id}</h4>
                           <Badge className="bg-green-400 text-vhs-black">
                             {experiment.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold">{experiment.name}</p>
+                        <p className="text-sm font-semibold text-slate-50">{experiment.name}</p>
                         <p className="text-xs text-gray-300">{experiment.description}</p>
                       </CardHeader>
                     </Card>
@@ -513,7 +513,7 @@ const Index = () => {
 
               {/* Mediumness - Medium Danger */}
               <div className="space-y-3">
-                <h3 className="text-lg font-mono text-vhs-crimson flex items-center gap-2">
+                <h3 className="text-lg font-mono flex items-center gap-2 text-[#addb14]">
                   <Icon name="AlertTriangle" size={18} className="text-yellow-400" />
                   MEDIUMNESS - Средняя опасность
                 </h3>
@@ -522,7 +522,7 @@ const Index = () => {
                     <Card key={experiment.id} className="bg-vhs-black border-yellow-400">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm">{experiment.id}</h4>
+                          <h4 className="font-mono text-sm text-slate-50">{experiment.id}</h4>
                           <Badge className={
                             experiment.status === 'RUNNING' ? 'bg-yellow-400 text-vhs-black animate-pulse' :
                             'bg-yellow-400 text-vhs-black'
@@ -530,7 +530,7 @@ const Index = () => {
                             {experiment.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold">{experiment.name}</p>
+                        <p className="text-sm font-semibold text-slate-50">{experiment.name}</p>
                         <p className="text-xs text-gray-300">{experiment.description}</p>
                       </CardHeader>
                     </Card>
@@ -540,7 +540,7 @@ const Index = () => {
 
               {/* Dangerer - Most Dangerous */}
               <div className="space-y-3">
-                <h3 className="text-lg font-mono text-vhs-crimson flex items-center gap-2">
+                <h3 className="text-lg font-mono flex items-center gap-2 text-[#000ecc]">
                   <Icon name="Skull" size={18} className="text-vhs-red animate-pulse" />
                   DANGERER - Крайне опасные эксперименты
                 </h3>
@@ -549,7 +549,7 @@ const Index = () => {
                     <Card key={experiment.id} className="bg-vhs-black border-vhs-red">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm">{experiment.id}</h4>
+                          <h4 className="font-mono text-sm text-slate-50">{experiment.id}</h4>
                           <Badge className={
                             experiment.status === 'CLASSIFIED' ? 'bg-vhs-red text-vhs-white animate-pulse' :
                             experiment.status === 'TERMINATED' ? 'bg-gray-600 text-vhs-white' :
@@ -558,7 +558,7 @@ const Index = () => {
                             {experiment.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold">{experiment.name}</p>
+                        <p className="text-sm font-semibold text-slate-50">{experiment.name}</p>
                         <p className="text-xs text-gray-300">{experiment.description}</p>
                       </CardHeader>
                     </Card>
