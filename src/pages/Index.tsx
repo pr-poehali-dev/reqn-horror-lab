@@ -293,7 +293,7 @@ const Index = () => {
             <div className={`mb-4 ${glitchActive ? 'animate-glitch' : ''}`}>
               <h1 className="text-3xl font-bold mb-2 text-[#0500ed]">REQN CO</h1>
               <h2 className="text-xl text-[#0500ff]">LABORATORY</h2>
-              <div className="text-xs opacity-70 mt-2">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</div>
+              <div className="text-xs opacity-70 mt-2 bg-[#24ff00]">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</div>
             </div>
             <div className="border-t border-vhs-crimson pt-4">
               <Icon name="Shield" size={32} className="mx-auto mb-2 text-vhs-crimson" />
