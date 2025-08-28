@@ -459,7 +459,7 @@ const Index = () => {
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-mono">{incident.id}</span>
+                          <span className="font-mono text-gray-50">{incident.id}</span>
                           <Badge 
                             variant={incident.severity === 'HIGH' || incident.severity === 'CRITICAL' ? 'destructive' : 'default'}
                             className={
