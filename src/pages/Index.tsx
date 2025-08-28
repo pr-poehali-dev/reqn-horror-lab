@@ -573,8 +573,8 @@ const Index = () => {
             <Card className="bg-vhs-black border-vhs-crimson">
               <CardContent className="p-8 text-center">
                 <Icon name="FileText" size={64} className="mx-auto mb-4 opacity-50" />
-                <h3 className="text-xl mb-2">АРХИВ ЗАПИСЕЙ</h3>
-                <p className="opacity-70">Доступ к архивным записям требует авторизации уровня 3</p>
+                <h3 className="text-xl mb-2 text-slate-50">АРХИВ ЗАПИСЕЙ</h3>
+                <p className="opacity-70 text-[#ff0000]">Доступ к архивным записям требует авторизации уровня 3</p>
                 <Button className="mt-4 bg-vhs-crimson text-vhs-white hover:bg-vhs-darkred">
                   ЗАПРОСИТЬ ДОСТУП
                 </Button>
