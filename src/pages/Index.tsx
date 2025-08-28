@@ -291,13 +291,13 @@ const Index = () => {
         <Card className="w-full max-w-md bg-vhs-black border-vhs-crimson">
           <CardHeader className="text-center pb-2">
             <div className={`mb-4 ${glitchActive ? 'animate-glitch' : ''}`}>
-              <h1 className="text-3xl font-bold mb-2">REQN CO</h1>
-              <h2 className="text-xl">LABORATORY</h2>
+              <h1 className="text-3xl font-bold mb-2 text-[#0500ed]">REQN CO</h1>
+              <h2 className="text-xl text-[#0500ff]">LABORATORY</h2>
               <div className="text-xs opacity-70 mt-2">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</div>
             </div>
             <div className="border-t border-vhs-crimson pt-4">
               <Icon name="Shield" size={32} className="mx-auto mb-2 text-vhs-crimson" />
-              <h3 className="text-lg font-mono">АВТОРИЗАЦИЯ ПЕРСОНАЛА</h3>
+              <h3 className="text-lg font-mono text-slate-50">АВТОРИЗАЦИЯ ПЕРСОНАЛА</h3>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
