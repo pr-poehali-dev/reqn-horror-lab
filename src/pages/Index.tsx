@@ -601,7 +601,7 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader>
-                  <h3 className="flex items-center gap-2">
+                  <h3 className="flex items-center gap-2 text-[#ffffff]">
                     <Icon name="Wifi" size={20} />
                     СОСТОЯНИЕ СИСТЕМЫ
                   </h3>
@@ -624,7 +624,7 @@ const Index = () => {
 
               <Card className="bg-vhs-black border-vhs-crimson">
                 <CardHeader>
-                  <h3 className="flex items-center gap-2">
+                  <h3 className="flex items-center gap-2 text-[#ff0000]">
                     <Icon name="AlertTriangle" size={20} />
                     ПРЕДУПРЕЖДЕНИЯ
                   </h3>
