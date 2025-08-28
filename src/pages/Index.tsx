@@ -376,8 +376,8 @@ const Index = () => {
       <header className="border-b border-vhs-crimson p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className={`transition-transform duration-100 ${glitchActive ? 'animate-glitch' : ''}`}>
-            <h1 className="text-3xl font-bold">REQN CO LABORATORY</h1>
-            <p className="text-sm opacity-70">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</p>
+            <h1 className="text-3xl font-bold text-[#3b00ff]">REQN CO LABORATORY</h1>
+            <p className="text-sm opacity-70 text-[#24ff00]">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</p>
           </div>
           <div className="text-right">
             <div className="text-xl font-mono">{formatTime(currentTime)}</div>
