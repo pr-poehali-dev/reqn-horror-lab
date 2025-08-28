@@ -403,12 +403,12 @@ const Index = () => {
 
           {/* Cameras Tab */}
           <TabsContent value="cameras">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-transparent">
               {cameras.map((camera) => (
                 <Card key={camera.id} className="bg-vhs-black border-vhs-crimson">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-center">
-                      <h3 className="font-mono text-lg">{camera.id}</h3>
+                      <h3 className="font-mono text-lg text-slate-50">{camera.id}</h3>
                       <Badge 
                         variant={camera.status === 'ONLINE' ? 'default' : 'destructive'}
                         className={camera.status === 'ONLINE' ? 'bg-vhs-crimson text-vhs-white' : 'bg-vhs-red text-vhs-white'}
@@ -416,7 +416,7 @@ const Index = () => {
                         {camera.status}
                       </Badge>
                     </div>
-                    <p className="text-sm opacity-70">{camera.location}</p>
+                    <p className="text-sm opacity-70 text-slate-50">{camera.location}</p>
                   </CardHeader>
                   <CardContent>
                     <div className="relative aspect-video bg-vhs-gray mb-3 overflow-hidden">
@@ -433,7 +433,7 @@ const Index = () => {
                           <Icon name="AlertTriangle" size={48} />
                         </div>
                       )}
-                      <div className="absolute top-2 left-2 bg-vhs-black bg-opacity-70 px-2 py-1 text-xs">
+                      <div className="absolute top-2 left-2 px-2 py-1 text-xs bg-[#ffffffb3]">
                         {formatTime(currentTime).split(' ')[1]}
                       </div>
                     </div>
