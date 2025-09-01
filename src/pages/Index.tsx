@@ -257,18 +257,18 @@ const Index = () => {
     { id: 'INC-003', time: '01:58:12', severity: 'MEDIUM', description: 'Аномальные звуки в комнате содержания' }
   ];
 
-  const experiments = {
+  const artificialBeings = {
     lower: [
-      { id: 'EXP-001', name: 'Изучение света', status: 'ACTIVE', description: 'Безопасный эксперимент с оптикой' },
-      { id: 'EXP-002', name: 'Температурные тесты', status: 'COMPLETED', description: 'Измерение теплопроводности' }
+      { id: 'SBJ-001', name: 'Светящийся Слизень', status: 'STABLE', description: 'Биолюминесцентное создание, питается светом' },
+      { id: 'SBJ-002', name: 'Кристальный Паук', status: 'DORMANT', description: 'Прозрачное существо, создаёт кристаллические нити' }
     ],
     mediumness: [
-      { id: 'EXP-047', name: 'Тест психики', status: 'RUNNING', description: 'Воздействие на подсознание' },
-      { id: 'EXP-081', name: 'Генетический анализ', status: 'PAUSED', description: 'Модификация ДНК образцов' }
+      { id: 'SBJ-047', name: 'Психический Червь', status: 'ACTIVE', description: 'Читает мысли на расстоянии до 10 метров' },
+      { id: 'SBJ-081', name: 'Мутант-Хамелеон', status: 'CONTAINED', description: 'Меняет ДНК по собственному желанию' }
     ],
     dangerer: [
-      { id: 'EXP-666', name: 'Проект Тёмная Материя', status: 'CLASSIFIED', description: 'ДОСТУП ОГРАНИЧЕН' },
-      { id: 'EXP-999', name: 'Портал в неизвестное', status: 'TERMINATED', description: 'Эксперимент прерван' }
+      { id: 'SBJ-666', name: 'Пожиратель Теней', status: 'CLASSIFIED', description: 'СУЩЕСТВО ПОГЛОЩАЕТ СВЕТ И МАТЕРИЮ' },
+      { id: 'SBJ-999', name: 'Безымянный Ужас', status: 'ESCAPED', description: 'ПОБЕГ 72 ЧАСА НАЗАД. МЕСТОПОЛОЖЕНИЕ НЕИЗВЕСТНО' }
     ]
   };
 
@@ -484,27 +484,27 @@ const Index = () => {
             </div>
           </TabsContent>
 
-          {/* Experiments Tab */}
+          {/* Artificial Beings Tab */}
           <TabsContent value="specimens">
             <div className="space-y-6">
               {/* Lower - Safest */}
               <div className="space-y-3">
                 <h3 className="text-lg font-mono flex items-center gap-2 text-[#db14b5]">
-                  <Icon name="Shield" size={18} className="text-green-400" />
-                  LOWER - Безопасные эксперименты
+                  <Icon name="Heart" size={18} className="text-green-400" />
+                  LOWER - Безопасные существа
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {experiments.lower.map((experiment) => (
-                    <Card key={experiment.id} className="bg-vhs-black border-green-400">
+                  {artificialBeings.lower.map((being) => (
+                    <Card key={being.id} className="bg-vhs-black border-green-400">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm text-slate-50">{experiment.id}</h4>
-                          <Badge className="bg-green-400 text-vhs-black">
-                            {experiment.status}
+                          <h4 className="font-mono text-sm text-slate-50">{being.id}</h4>
+                          <Badge className={being.status === 'STABLE' ? 'bg-green-400 text-vhs-black' : 'bg-gray-400 text-vhs-black'}>
+                            {being.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold text-slate-50">{experiment.name}</p>
-                        <p className="text-xs text-gray-300">{experiment.description}</p>
+                        <p className="text-sm font-semibold text-slate-50">{being.name}</p>
+                        <p className="text-xs text-gray-300">{being.description}</p>
                       </CardHeader>
                     </Card>
                   ))}
@@ -514,24 +514,24 @@ const Index = () => {
               {/* Mediumness - Medium Danger */}
               <div className="space-y-3">
                 <h3 className="text-lg font-mono flex items-center gap-2 text-[#addb14]">
-                  <Icon name="AlertTriangle" size={18} className="text-yellow-400" />
-                  MEDIUMNESS - Средняя опасность
+                  <Icon name="Eye" size={18} className="text-yellow-400" />
+                  MEDIUMNESS - Опасные существа
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {experiments.mediumness.map((experiment) => (
-                    <Card key={experiment.id} className="bg-vhs-black border-yellow-400">
+                  {artificialBeings.mediumness.map((being) => (
+                    <Card key={being.id} className="bg-vhs-black border-yellow-400">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm text-slate-50">{experiment.id}</h4>
+                          <h4 className="font-mono text-sm text-slate-50">{being.id}</h4>
                           <Badge className={
-                            experiment.status === 'RUNNING' ? 'bg-yellow-400 text-vhs-black animate-pulse' :
+                            being.status === 'ACTIVE' ? 'bg-yellow-400 text-vhs-black animate-pulse' :
                             'bg-yellow-400 text-vhs-black'
                           }>
-                            {experiment.status}
+                            {being.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold text-slate-50">{experiment.name}</p>
-                        <p className="text-xs text-gray-300">{experiment.description}</p>
+                        <p className="text-sm font-semibold text-slate-50">{being.name}</p>
+                        <p className="text-xs text-gray-300">{being.description}</p>
                       </CardHeader>
                     </Card>
                   ))}
@@ -542,24 +542,24 @@ const Index = () => {
               <div className="space-y-3">
                 <h3 className="text-lg font-mono flex items-center gap-2 text-[#000ecc]">
                   <Icon name="Skull" size={18} className="text-vhs-red animate-pulse" />
-                  DANGERER - Крайне опасные эксперименты
+                  DANGERER - Смертельно опасные существа
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {experiments.dangerer.map((experiment) => (
-                    <Card key={experiment.id} className="bg-vhs-black border-vhs-red">
+                  {artificialBeings.dangerer.map((being) => (
+                    <Card key={being.id} className="bg-vhs-black border-vhs-red">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm text-slate-50">{experiment.id}</h4>
+                          <h4 className="font-mono text-sm text-slate-50">{being.id}</h4>
                           <Badge className={
-                            experiment.status === 'CLASSIFIED' ? 'bg-vhs-red text-vhs-white animate-pulse' :
-                            experiment.status === 'TERMINATED' ? 'bg-gray-600 text-vhs-white' :
+                            being.status === 'CLASSIFIED' ? 'bg-vhs-red text-vhs-white animate-pulse' :
+                            being.status === 'ESCAPED' ? 'bg-red-800 text-vhs-white animate-pulse' :
                             'bg-vhs-red text-vhs-white'
                           }>
-                            {experiment.status}
+                            {being.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold text-slate-50">{experiment.name}</p>
-                        <p className="text-xs text-gray-300">{experiment.description}</p>
+                        <p className="text-sm font-semibold text-slate-50">{being.name}</p>
+                        <p className="text-xs text-gray-300">{being.description}</p>
                       </CardHeader>
                     </Card>
                   ))}
@@ -616,7 +616,7 @@ const Index = () => {
                     <span className="text-vhs-red">3</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Эксперименты активны:</span>
+                    <span>Существа под контролем:</span>
                     <span className="text-yellow-500">3/6</span>
                   </div>
                 </CardContent>
@@ -631,9 +631,9 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div className="text-vhs-red animate-pulse">⚠ Эксперимент EXP-666 засекречен</div>
+                    <div className="text-vhs-red animate-pulse">⚠ SBJ-666 Пожиратель Теней засекречен</div>
                     <div className="text-yellow-500">⚠ Камера CAM-03 офлайн</div>
-                    <div className="text-vhs-red">⚠ Обнаружена аномальная активность</div>
+                    <div className="text-vhs-red">⚠ SBJ-999 СБЕЖАЛО! Поиск продолжается</div>
                   </div>
                 </CardContent>
               </Card>
