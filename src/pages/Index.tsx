@@ -586,7 +586,7 @@ const Index = () => {
           <TabsContent value="documents">
             <Card className="bg-vhs-black border-vhs-crimson">
               <CardContent className="p-8 text-center">
-                <Icon name="Lock" size={64} className="mx-auto mb-4 opacity-50" />
+                <Icon name="Lock" size={64} className="mx-auto mb-4 opacity-50 text-red-500" />
                 <h3 className="text-xl mb-2 text-[#ff0000]">СЕКРЕТНЫЕ ДОКУМЕНТЫ</h3>
                 <p className="opacity-70 text-[#ff0000]">Доступ ограничен. Обратитесь к администратору системы</p>
                 <Button className="mt-4 bg-vhs-red text-vhs-white hover:bg-red-600">
