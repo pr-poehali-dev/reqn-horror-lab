@@ -317,6 +317,7 @@ const Index = () => {
   };
 
   const unknownBeings = [
+    { id: 'RQ-000', name: 'РОЗИМ', status: 'ORIGIN', description: 'ПРАРОДИТЕЛЬ ВСЕХ RQ. Чёрное человекоподобное существо с красными глазами, зубами и длинным острым хвостом. ПРОИСХОЖДЕНИЕ И ЦЕЛИ НЕИЗВЕСТНЫ' },
     { id: 'RQ-???', name: 'Шёпчущая Тень', status: 'OBSERVED', description: 'Неопределимая сущность в коридоре Б-7. Появляется каждую полночь' },
     { id: 'RQ-X01', name: 'Зеркальный Двойник', status: 'STUDYING', description: 'Копирует внешность персонала. Происхождение неизвестно' },
     { id: 'RQ-∞', name: 'Бесконечный Лабиринт', status: 'ANOMALY', description: 'Пространственная аномалия в секторе C. ВХОД ЗАПРЕЩЕН' }
@@ -705,11 +706,17 @@ const Index = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {unknownBeings.map((being) => (
-                    <Card key={being.id} className="bg-vhs-black border-purple-500 hover:border-purple-400 transition-colors">
+                    <Card key={being.id} className={
+                      being.id === 'RQ-000' ? 'bg-black border-red-600 hover:border-red-500 transition-colors shadow-red-900/50 shadow-lg' :
+                      'bg-vhs-black border-purple-500 hover:border-purple-400 transition-colors'
+                    }>
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-center">
-                          <h4 className="font-mono text-sm text-slate-50">{being.id}</h4>
+                          <h4 className={`font-mono text-sm ${being.id === 'RQ-000' ? 'text-red-200' : 'text-slate-50'}`}>
+                            {being.id}
+                          </h4>
                           <Badge className={
+                            being.status === 'ORIGIN' ? 'bg-red-800 text-vhs-white animate-pulse border border-red-600' :
                             being.status === 'OBSERVED' ? 'bg-purple-600 text-vhs-white animate-pulse' :
                             being.status === 'STUDYING' ? 'bg-blue-600 text-vhs-white' :
                             being.status === 'ANOMALY' ? 'bg-red-800 text-vhs-white animate-pulse' :
@@ -718,8 +725,16 @@ const Index = () => {
                             {being.status}
                           </Badge>
                         </div>
-                        <p className="text-sm font-semibold text-purple-200">{being.name}</p>
-                        <p className="text-xs text-gray-300">{being.description}</p>
+                        <p className={`text-sm font-semibold ${
+                          being.id === 'RQ-000' ? 'text-red-300 font-bold animate-pulse' : 'text-purple-200'
+                        }`}>
+                          {being.name}
+                        </p>
+                        <p className={`text-xs ${
+                          being.id === 'RQ-000' ? 'text-red-100' : 'text-gray-300'
+                        }`}>
+                          {being.description}
+                        </p>
                       </CardHeader>
                     </Card>
                   ))}
@@ -733,11 +748,16 @@ const Index = () => {
                     </h3>
                   </CardHeader>
                   <CardContent className="space-y-3 text-sm">
+                    <div className="text-red-500 animate-pulse font-bold border border-red-600 p-2 bg-red-950/20">
+                      🔴 RQ-000 "РОЗИМ" - АБСОЛЮТНАЯ УГРОЗА. СОЗДАТЕЛЬ ВСЕХ RQ. МЕСТОПОЛОЖЕНИЕ НЕИЗВЕСТНО. ПРИ ОБНАРУЖЕНИИ НЕМЕДЛЕННО ПОКИНУТЬ ОБЪЕКТ
+                    </div>
                     <div className="text-purple-300 animate-pulse">⚠ RQ-??? появляется строго в полночь - избегайте коридора Б-7</div>
                     <div className="text-red-400 animate-pulse">⚠ RQ-X01 может принимать облик любого сотрудника - требуется двойная проверка личности</div>
                     <div className="text-red-500 animate-pulse font-bold">⚠ RQ-∞ КАТЕГОРИЧЕСКИ ЗАПРЕЩЕН ВХОД В СЕКТОР C - ПРОСТРАНСТВЕННАЯ АНОМАЛИЯ АКТИВНА</div>
                     <div className="border-t border-purple-500 pt-2 text-purple-200">
                       Данные существа не входят в официальную классификацию. Информация строго конфиденциальна.
+                      <br/>
+                      <span className="text-red-300 font-bold">RQ-000 является источником всех остальных RQ-объектов.</span>
                     </div>
                   </CardContent>
                 </Card>
