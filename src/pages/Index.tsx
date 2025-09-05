@@ -18,6 +18,9 @@ const Index = () => {
   const [employeeName, setEmployeeName] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [secretKeySequence, setSecretKeySequence] = useState('');
+  const [secretTabVisible, setSecretTabVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('cameras');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -34,6 +37,47 @@ const Index = () => {
       clearInterval(glitchTimer);
     };
   }, []);
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      const newSequence = secretKeySequence + e.key;
+      
+      if ('88JURKEYOPEN'.startsWith(newSequence)) {
+        setSecretKeySequence(newSequence);
+        
+        if (newSequence === '88JURKEYOPEN') {
+          setSecretTabVisible(true);
+          setActiveTab('unknown');
+          setSecretKeySequence('');
+          
+          // Звук разблокировки
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.3);
+          oscillator.type = 'sine';
+          
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        }
+      } else {
+        setSecretKeySequence('');
+      }
+    };
+
+    if (isAuthenticated) {
+      window.addEventListener('keydown', handleKeyPress);
+      return () => window.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [secretKeySequence, isAuthenticated]);
 
   const handleLogin = () => {
     // Список авторизованных сотрудников
@@ -259,18 +303,24 @@ const Index = () => {
 
   const artificialBeings = {
     lower: [
-      { id: 'SBJ-001', name: 'Светящийся Слизень', status: 'STABLE', description: 'Биолюминесцентное создание, питается светом' },
-      { id: 'SBJ-002', name: 'Кристальный Паук', status: 'DORMANT', description: 'Прозрачное существо, создаёт кристаллические нити' }
+      { id: 'RQ-001', name: 'Светящийся Слизень', status: 'STABLE', description: 'Биолюминесцентное создание, питается светом' },
+      { id: 'RQ-002', name: 'Кристальный Паук', status: 'DORMANT', description: 'Прозрачное существо, создаёт кристаллические нити' }
     ],
     mediumness: [
-      { id: 'SBJ-047', name: 'Психический Червь', status: 'ACTIVE', description: 'Читает мысли на расстоянии до 10 метров' },
-      { id: 'SBJ-081', name: 'Мутант-Хамелеон', status: 'CONTAINED', description: 'Меняет ДНК по собственному желанию' }
+      { id: 'RQ-047', name: 'Психический Червь', status: 'ACTIVE', description: 'Читает мысли на расстоянии до 10 метров' },
+      { id: 'RQ-081', name: 'Мутант-Хамелеон', status: 'CONTAINED', description: 'Меняет ДНК по собственному желанию' }
     ],
     dangerer: [
-      { id: 'SBJ-666', name: 'Пожиратель Теней', status: 'CLASSIFIED', description: 'СУЩЕСТВО ПОГЛОЩАЕТ СВЕТ И МАТЕРИЮ' },
-      { id: 'SBJ-999', name: 'Безымянный Ужас', status: 'ESCAPED', description: 'ПОБЕГ 72 ЧАСА НАЗАД. МЕСТОПОЛОЖЕНИЕ НЕИЗВЕСТНО' }
+      { id: 'RQ-666', name: 'Пожиратель Теней', status: 'CLASSIFIED', description: 'СУЩЕСТВО ПОГЛОЩАЕТ СВЕТ И МАТЕРИЮ' },
+      { id: 'RQ-999', name: 'Безымянный Ужас', status: 'ESCAPED', description: 'ПОБЕГ 72 ЧАСА НАЗАД. МЕСТОПОЛОЖЕНИЕ НЕИЗВЕСТНО' }
     ]
   };
+
+  const unknownBeings = [
+    { id: 'RQ-???', name: 'Шёпчущая Тень', status: 'OBSERVED', description: 'Неопределимая сущность в коридоре Б-7. Появляется каждую полночь' },
+    { id: 'RQ-X01', name: 'Зеркальный Двойник', status: 'STUDYING', description: 'Копирует внешность персонала. Происхождение неизвестно' },
+    { id: 'RQ-∞', name: 'Бесконечный Лабиринт', status: 'ANOMALY', description: 'Пространственная аномалия в секторе C. ВХОД ЗАПРЕЩЕН' }
+  ];
 
   // Экран авторизации
   if (!isAuthenticated) {
@@ -391,14 +441,17 @@ const Index = () => {
       </header>
 
       <div className="max-w-7xl mx-auto p-4">
-        <Tabs defaultValue="cameras" className="w-full">
-          <TabsList className="grid grid-cols-6 w-full mb-6 bg-vhs-black border border-vhs-crimson">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className={`grid ${secretTabVisible ? 'grid-cols-7' : 'grid-cols-6'} w-full mb-6 bg-vhs-black border border-vhs-crimson`}>
             <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">КАМЕРЫ</TabsTrigger>
             <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ИНЦИДЕНТЫ</TabsTrigger>
             <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ЭКСПЕРИМЕНТЫ</TabsTrigger>
             <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">АРХИВ</TabsTrigger>
             <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ДОКУМЕНТЫ</TabsTrigger>
             <TabsTrigger value="status" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">СТАТУС</TabsTrigger>
+            {secretTabVisible && (
+              <TabsTrigger value="unknown" className="data-[state=active]:bg-purple-600 data-[state=active]:text-vhs-white text-purple-400 animate-pulse">НЕИЗВЕСТНЫЕ RQ</TabsTrigger>
+            )}
           </TabsList>
 
           {/* Cameras Tab */}
@@ -631,14 +684,66 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <div className="text-vhs-red animate-pulse">⚠ SBJ-666 Пожиратель Теней засекречен</div>
+                    <div className="text-vhs-red animate-pulse">⚠ RQ-666 Пожиратель Теней засекречен</div>
                     <div className="text-yellow-500">⚠ Камера CAM-03 офлайн</div>
-                    <div className="text-vhs-red">⚠ SBJ-999 СБЕЖАЛО! Поиск продолжается</div>
+                    <div className="text-vhs-red">⚠ RQ-999 СБЕЖАЛО! Поиск продолжается</div>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
+
+          {/* Unknown Beings Secret Tab */}
+          {secretTabVisible && (
+            <TabsContent value="unknown">
+              <div className="space-y-6">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-mono text-purple-400 animate-pulse mb-2">НЕИЗВЕСТНЫЕ И НЕИЗУЧЕННЫЕ RQ</h2>
+                  <p className="text-sm opacity-70 text-purple-300">ДОСТУП ПОЛУЧЕН ПО СЕКРЕТНОМУ КОДУ</p>
+                  <div className="border-t border-purple-500 mt-2"></div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {unknownBeings.map((being) => (
+                    <Card key={being.id} className="bg-vhs-black border-purple-500 hover:border-purple-400 transition-colors">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-mono text-sm text-slate-50">{being.id}</h4>
+                          <Badge className={
+                            being.status === 'OBSERVED' ? 'bg-purple-600 text-vhs-white animate-pulse' :
+                            being.status === 'STUDYING' ? 'bg-blue-600 text-vhs-white' :
+                            being.status === 'ANOMALY' ? 'bg-red-800 text-vhs-white animate-pulse' :
+                            'bg-purple-500 text-vhs-white'
+                          }>
+                            {being.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-semibold text-purple-200">{being.name}</p>
+                        <p className="text-xs text-gray-300">{being.description}</p>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+                
+                <Card className="bg-vhs-black border-purple-500">
+                  <CardHeader>
+                    <h3 className="flex items-center gap-2 text-purple-400">
+                      <Icon name="AlertTriangle" size={20} className="animate-pulse" />
+                      КРИТИЧЕСКИЕ ПРЕДУПРЕЖДЕНИЯ
+                    </h3>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm">
+                    <div className="text-purple-300 animate-pulse">⚠ RQ-??? появляется строго в полночь - избегайте коридора Б-7</div>
+                    <div className="text-red-400 animate-pulse">⚠ RQ-X01 может принимать облик любого сотрудника - требуется двойная проверка личности</div>
+                    <div className="text-red-500 animate-pulse font-bold">⚠ RQ-∞ КАТЕГОРИЧЕСКИ ЗАПРЕЩЕН ВХОД В СЕКТОР C - ПРОСТРАНСТВЕННАЯ АНОМАЛИЯ АКТИВНА</div>
+                    <div className="border-t border-purple-500 pt-2 text-purple-200">
+                      Данные существа не входят в официальную классификацию. Информация строго конфиденциальна.
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
 
