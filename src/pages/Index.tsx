@@ -21,6 +21,9 @@ const Index = () => {
   const [secretKeySequence, setSecretKeySequence] = useState('');
   const [secretTabVisible, setSecretTabVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('cameras');
+  const [selectedRQ, setSelectedRQ] = useState<any>(null);
+  const [rqDialogOpen, setRqDialogOpen] = useState(false);
+  const [systemError, setSystemError] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -119,6 +122,40 @@ const Index = () => {
       minute: '2-digit',
       second: '2-digit'
     });
+  };
+
+  const openRQDetails = (rq: any) => {
+    setSelectedRQ(rq);
+    setRqDialogOpen(true);
+    
+    // Специальная логика для Розима
+    if (rq.id === 'RQ-000') {
+      setTimeout(() => {
+        setSystemError(true);
+        setRqDialogOpen(false);
+        
+        // Звук системной ошибки
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+        oscillator.frequency.linearRampToValueAtTime(50, audioContext.currentTime + 1);
+        oscillator.type = 'square';
+        
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 1);
+        
+        // Сброс ошибки через 5 секунд
+        setTimeout(() => setSystemError(false), 5000);
+      }, 3000);
+    }
   };
 
   const playCreepyAudio = () => {
@@ -316,11 +353,57 @@ const Index = () => {
     ]
   };
 
+  const allRQBeings = [
+    ...artificialBeings.lower.map(being => ({...being, category: 'lower'})),
+    ...artificialBeings.mediumness.map(being => ({...being, category: 'mediumness'})),
+    ...artificialBeings.dangerer.map(being => ({...being, category: 'dangerer'})),
+  ];
+
   const unknownBeings = [
-    { id: 'RQ-000', name: 'РОЗИМ', status: 'ORIGIN', description: 'ПРАРОДИТЕЛЬ ВСЕХ RQ. Чёрное человекоподобное существо с красными глазами, зубами и длинным острым хвостом. ПРОИСХОЖДЕНИЕ И ЦЕЛИ НЕИЗВЕСТНЫ' },
-    { id: 'RQ-???', name: 'Шёпчущая Тень', status: 'OBSERVED', description: 'Неопределимая сущность в коридоре Б-7. Появляется каждую полночь' },
-    { id: 'RQ-X01', name: 'Зеркальный Двойник', status: 'STUDYING', description: 'Копирует внешность персонала. Происхождение неизвестно' },
-    { id: 'RQ-∞', name: 'Бесконечный Лабиринт', status: 'ANOMALY', description: 'Пространственная аномалия в секторе C. ВХОД ЗАПРЕЩЕН' }
+    { 
+      id: 'RQ-000', 
+      name: 'РОЗИМ', 
+      status: 'ORIGIN', 
+      description: 'ПРАРОДИТЕЛЬ ВСЕХ RQ. Чёрное человекоподобное существо с красными глазами, зубами и длинным острым хвостом. ПРОИСХОЖДЕНИЕ И ЦЕЛИ НЕИЗВЕСТНЫ',
+      fullDescription: `КЛАССИФИКАЦИЯ: КЕТЕР
+ВНЕШНИЙ ВИД: Антропоморфное существо ростом 2.3 метра. Кожа абсолютно чёрная, поглощающая свет. Красные глаза излучают собственное свечение. Зубы острые, металлического оттенка. Длинный хвост с костяными шипами способен пробивать металл.
+
+СПОСОБНОСТИ:
+• Создание других RQ-существ из неизвестного материала
+• Телепортация между измерениями
+• Контроль над всеми созданными им существами
+• Искажение реальности в радиусе 50 метров
+• Регенерация любых повреждений
+
+ПОВЕДЕНИЕ: Крайне агрессивен к человеческому присутствию. Демонстрирует высокий интеллект и способность к планированию. Цель создания RQ-существ неизвестна. Предположительно готовит масштабную атаку на человечество.
+
+ПРОТОКОЛ СДЕРЖИВАНИЯ: НЕ УСТАНОВЛЕН. Местоположение неизвестно.
+
+ПОСЛЕДНЕЕ НАБЛЮДЕНИЕ: [ДАННЫЕ УДАЛЕНЫ]
+
+ПРИМЕЧАНИЕ: Существование RQ-000 ставит под угрозу весь проект. Рекомендуется немедленная эвакуация всего персонала при любых признаках его присутствия.`
+    },
+    { 
+      id: 'RQ-???', 
+      name: 'Шёпчущая Тень', 
+      status: 'OBSERVED', 
+      description: 'Неопределимая сущность в коридоре Б-7. Появляется каждую полночь',
+      fullDescription: 'КЛАССИФИКАЦИЯ: ЕВКЛИД\n\nВНЕШНИЙ ВИД: Бесформенная тёмная масса, постоянно меняющая очертания. Высота варьируется от 0.5 до 3 метров.\n\nСПОСОБНОСТИ:\n• Появление строго в 00:00 в коридоре Б-7\n• Издаёт неразборчивый шёпот на неизвестном языке\n• Не реагирует на физическое воздействие\n• Исчезает через 47 минут после появления\n\nПОВЕДЕНИЕ: Нейтрально к персоналу. Движется по коридору медленно, останавливается у каждой двери на 3-4 минуты. Шёпот усиливается при приближении людей.\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: Коридор Б-7 закрывается с 23:45 до 01:00 ежедневно.'
+    },
+    { 
+      id: 'RQ-X01', 
+      name: 'Зеркальный Двойник', 
+      status: 'STUDYING', 
+      description: 'Копирует внешность персонала. Происхождение неизвестно',
+      fullDescription: 'КЛАССИФИКАЦИЯ: ЕВКЛИД\n\nВНЕШНИЙ ВИД: Точная копия любого человека в радиусе 100 метров. Единственное отличие - отсутствие отражения в зеркалах.\n\nСПОСОБНОСТИ:\n• Мгновенное копирование внешности\n• Имитация голоса и манер поведения\n• Доступ к поверхностным воспоминаниям копируемого\n• Сохранение облика до 72 часов\n\nПОВЕДЕНИЕ: Пытается интегрироваться в коллектив. Ведёт себя как копируемый человек, но с небольшими отклонениями в поведении.\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: Обязательная проверка всего персонала зеркалами каждые 4 часа.'
+    },
+    { 
+      id: 'RQ-∞', 
+      name: 'Бесконечный Лабиринт', 
+      status: 'ANOMALY', 
+      description: 'Пространственная аномалия в секторе C. ВХОД ЗАПРЕЩЕН',
+      fullDescription: 'КЛАССИФИКАЦИЯ: КЕТЕР\n\nОПИСАНИЕ: Пространственная аномалия, превращающая сектор C в бесконечно повторяющиеся коридоры.\n\nЭФФЕКТЫ:\n• Искажение пространства внутри сектора\n• Невозможность найти выход обычными способами\n• Появление "призрачных" копий исследователей\n• Постоянно меняющаяся планировка\n\nВОЗДЕЙСТВИЕ НА ПЕРСОНАЛ:\n• Потеря ориентации в пространстве\n• Галлюцинации через 2+ часа\n• Полная дезориентация через 6+ часов\n• [ЗАСЕКРЕЧЕНО] через 12+ часов\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: Сектор C полностью изолирован. Доступ запрещён всему персоналу без исключения.'
+    }
   ];
 
   // Экран авторизации
@@ -560,6 +643,16 @@ const Index = () => {
                         <p className="text-sm font-semibold text-slate-50">{being.name}</p>
                         <p className="text-xs text-gray-300">{being.description}</p>
                       </CardHeader>
+                      <CardContent className="pt-0">
+                        <Button 
+                          onClick={() => openRQDetails({...being, fullDescription: `КЛАССИФИКАЦИЯ: БЕЗОПАСНЫЙ\n\nОПИСАНИЕ: ${being.description}\n\nПОВЕДЕНИЕ: Неагрессивное. Подходит для базовых исследований.\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: Стандартный контейнмент.`})}
+                          size="sm" 
+                          className="w-full bg-green-600 hover:bg-green-500 text-vhs-white text-xs"
+                        >
+                          <Icon name="FileText" size={14} className="mr-1" />
+                          ПОДРОБНЕЕ
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>
@@ -587,6 +680,16 @@ const Index = () => {
                         <p className="text-sm font-semibold text-slate-50">{being.name}</p>
                         <p className="text-xs text-gray-300">{being.description}</p>
                       </CardHeader>
+                      <CardContent className="pt-0">
+                        <Button 
+                          onClick={() => openRQDetails({...being, fullDescription: `КЛАССИФИКАЦИЯ: ОПАСНЫЙ\n\nОПИСАНИЕ: ${being.description}\n\nПОВЕДЕНИЕ: Умеренно агрессивное. Требует осторожности при обращении.\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: Усиленный контейнмент. Постоянный мониторинг.`})}
+                          size="sm" 
+                          className="w-full bg-yellow-600 hover:bg-yellow-500 text-vhs-black text-xs"
+                        >
+                          <Icon name="FileText" size={14} className="mr-1" />
+                          ПОДРОБНЕЕ
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>
@@ -615,6 +718,16 @@ const Index = () => {
                         <p className="text-sm font-semibold text-slate-50">{being.name}</p>
                         <p className="text-xs text-gray-300">{being.description}</p>
                       </CardHeader>
+                      <CardContent className="pt-0">
+                        <Button 
+                          onClick={() => openRQDetails({...being, fullDescription: `КЛАССИФИКАЦИЯ: КРИТИЧЕСКАЯ УГРОЗА\n\nОПИСАНИЕ: ${being.description}\n\nПОВЕДЕНИЕ: КРАЙНЕ АГРЕССИВНОЕ. ПРЕДСТАВЛЯЕТ МАКСИМАЛЬНУЮ ОПАСНОСТЬ.\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: МАКСИМАЛЬНЫЕ МЕРЫ БЕЗОПАСНОСТИ. ПРИ НАРУШЕНИИ - НЕМЕДЛЕННАЯ ЭВАКУАЦИЯ.`})}
+                          size="sm" 
+                          className="w-full bg-vhs-red hover:bg-red-600 text-vhs-white text-xs animate-pulse"
+                        >
+                          <Icon name="AlertTriangle" size={14} className="mr-1" />
+                          КРИТИЧНО
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>
@@ -736,6 +849,20 @@ const Index = () => {
                           {being.description}
                         </p>
                       </CardHeader>
+                      <CardContent className="pt-0">
+                        <Button 
+                          onClick={() => openRQDetails(being)}
+                          size="sm" 
+                          className={`w-full text-xs ${
+                            being.id === 'RQ-000' 
+                              ? 'bg-red-800 hover:bg-red-700 text-red-100 border border-red-600' 
+                              : 'bg-purple-600 hover:bg-purple-500 text-vhs-white'
+                          }`}
+                        >
+                          <Icon name="FileText" size={14} className="mr-1" />
+                          {being.id === 'RQ-000' ? 'ПОЛНОЕ ДОСЬЕ' : 'ПОДРОБНЕЕ'}
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>
@@ -942,6 +1069,83 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* RQ Details Dialog */}
+      <Dialog open={rqDialogOpen} onOpenChange={setRqDialogOpen}>
+        <DialogContent className={`font-vhs max-w-4xl ${
+          selectedRQ?.id === 'RQ-000' 
+            ? 'bg-black border-red-600 text-red-100' 
+            : 'bg-vhs-black border-purple-500 text-vhs-white'
+        }`}>
+          <DialogHeader>
+            <DialogTitle className={`text-2xl font-mono flex items-center gap-3 ${
+              selectedRQ?.id === 'RQ-000' ? 'text-red-200' : 'text-purple-200'
+            }`}>
+              <Icon name="FileText" size={24} className={selectedRQ?.id === 'RQ-000' ? 'text-red-400' : 'text-purple-400'} />
+              {selectedRQ?.id} - {selectedRQ?.name}
+              <Badge className={
+                selectedRQ?.id === 'RQ-000' ? 'bg-red-800 text-red-100 animate-pulse border border-red-600' :
+                selectedRQ?.status === 'OBSERVED' ? 'bg-purple-600 text-vhs-white animate-pulse' :
+                selectedRQ?.status === 'STUDYING' ? 'bg-blue-600 text-vhs-white' :
+                selectedRQ?.status === 'ANOMALY' ? 'bg-red-800 text-vhs-white animate-pulse' :
+                selectedRQ?.status === 'ACTIVE' ? 'bg-yellow-400 text-vhs-black animate-pulse' :
+                selectedRQ?.status === 'ESCAPED' ? 'bg-red-800 text-vhs-white animate-pulse' :
+                'bg-gray-600 text-vhs-white'
+              }>
+                {selectedRQ?.status}
+              </Badge>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className={`space-y-4 max-h-96 overflow-y-auto ${
+            selectedRQ?.id === 'RQ-000' ? 'text-red-100' : 'text-gray-200'
+          }`}>
+            <div className={`p-4 rounded border ${
+              selectedRQ?.id === 'RQ-000' 
+                ? 'bg-red-950/30 border-red-600' 
+                : 'bg-purple-950/30 border-purple-500'
+            }`}>
+              <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                {selectedRQ?.fullDescription || 'Нет доступных данных.'}
+              </pre>
+            </div>
+            
+            {selectedRQ?.id === 'RQ-000' && (
+              <div className="text-center space-y-2">
+                <div className="text-red-400 animate-pulse text-lg font-bold">
+                  ⚠ КОНФИДЕНЦИАЛЬНАЯ ИНФОРМАЦИЯ ⚠
+                </div>
+                <div className="text-red-300 text-sm">
+                  Автоматическое закрытие через 3 секунды...
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* System Error Screen */}
+      {systemError && (
+        <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center font-vhs">
+          <div className="text-center space-y-4 animate-pulse">
+            <div className="text-6xl text-red-500 font-bold">
+              ☠ SYSTEM ERROR ☠
+            </div>
+            <div className="text-2xl text-red-400">
+              ACCESS DENIED
+            </div>
+            <div className="text-lg text-red-300">
+              UNAUTHORIZED DATA BREACH DETECTED
+            </div>
+            <div className="text-sm text-red-200 opacity-70">
+              RQ-000 INFORMATION IS CLASSIFIED
+            </div>
+            <div className="text-xs text-red-100 opacity-50">
+              Система будет восстановлена через 5 секунд...
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
