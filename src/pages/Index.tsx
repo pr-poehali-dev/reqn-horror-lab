@@ -24,6 +24,8 @@ const Index = () => {
   const [selectedRQ, setSelectedRQ] = useState<any>(null);
   const [rqDialogOpen, setRqDialogOpen] = useState(false);
   const [systemError, setSystemError] = useState(false);
+  const [secretCodeInput, setSecretCodeInput] = useState('');
+  const [secretInputOpen, setSecretInputOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -81,6 +83,35 @@ const Index = () => {
       return () => window.removeEventListener('keydown', handleKeyPress);
     }
   }, [secretKeySequence, isAuthenticated]);
+
+  const handleSecretCodeSubmit = () => {
+    if (secretCodeInput === '88JURKEYOPEN') {
+      setSecretTabVisible(true);
+      setActiveTab('unknown');
+      setSecretInputOpen(false);
+      setSecretCodeInput('');
+      
+      // Звук разблокировки
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.3);
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    } else {
+      setSecretCodeInput('');
+    }
+  };
 
   const handleLogin = () => {
     // Список авторизованных сотрудников
@@ -564,56 +595,64 @@ const Index = () => {
       </div>
 
       {/* Header */}
-      <header className="border-b border-vhs-crimson p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className={`transition-transform duration-100 ${glitchActive ? 'animate-glitch' : ''}`}>
-            <h1 className="text-3xl font-bold text-[#3b00ff]">REQN CO LABORATORY</h1>
-            <p className="text-sm opacity-70 text-[#24ff00]">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</p>
+      <header className="border-b border-vhs-crimson p-3 sm:p-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+          <div className={`transition-transform duration-100 ${glitchActive ? 'animate-glitch' : ''} text-center sm:text-left`}>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#3b00ff]">REQN CO LABORATORY</h1>
+            <p className="text-xs sm:text-sm opacity-70 text-[#24ff00]">СИСТЕМА БЕЗОПАСНОСТИ v2.1.3</p>
           </div>
-          <div className="text-right">
-            <div className="text-xl font-mono">{formatTime(currentTime)}</div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-vhs-crimson text-vhs-crimson">
+          <div className="text-center sm:text-right flex flex-col gap-2">
+            <div className="text-lg sm:text-xl font-mono">{formatTime(currentTime)}</div>
+            <div className="flex items-center justify-center sm:justify-end gap-2">
+              <Badge variant="outline" className="border-vhs-crimson text-vhs-crimson text-xs">
                 СИСТЕМА АКТИВНА
               </Badge>
+              <Button
+                size="sm"
+                onClick={() => setSecretInputOpen(true)}
+                className="bg-purple-600 hover:bg-purple-700 text-xs px-2 py-1"
+              >
+                <Icon name="Keyboard" size={14} className="mr-1" />
+                КОД
+              </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-4">
+      <div className="max-w-7xl mx-auto p-2 sm:p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className={`grid ${secretTabVisible ? 'grid-cols-7' : 'grid-cols-6'} w-full mb-6 bg-vhs-black border border-vhs-crimson`}>
-            <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">КАМЕРЫ</TabsTrigger>
-            <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ИНЦИДЕНТЫ</TabsTrigger>
-            <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ЭКСПЕРИМЕНТЫ</TabsTrigger>
-            <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">АРХИВ</TabsTrigger>
-            <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">ДОКУМЕНТЫ</TabsTrigger>
-            <TabsTrigger value="status" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white">СТАТУС</TabsTrigger>
+          <TabsList className={`grid ${secretTabVisible ? 'grid-cols-3 lg:grid-cols-7' : 'grid-cols-2 lg:grid-cols-6'} w-full mb-4 sm:mb-6 bg-vhs-black border border-vhs-crimson`}>
+            <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">КАМЕРЫ</TabsTrigger>
+            <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">ИНЦИДЕНТЫ</TabsTrigger>
+            <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">ЭКСПЕРИМЕНТЫ</TabsTrigger>
+            <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">АРХИВ</TabsTrigger>
+            <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">ДОКУМЕНТЫ</TabsTrigger>
+            <TabsTrigger value="status" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">СТАТУС</TabsTrigger>
             {secretTabVisible && (
-              <TabsTrigger value="unknown" className="data-[state=active]:bg-purple-600 data-[state=active]:text-vhs-white text-purple-400 animate-pulse">НЕИЗВЕСТНЫЕ RQ</TabsTrigger>
+              <TabsTrigger value="unknown" className="data-[state=active]:bg-purple-600 data-[state=active]:text-vhs-white text-purple-400 animate-pulse text-xs sm:text-sm p-1 sm:p-2 col-span-2 lg:col-span-1">НЕИЗВЕСТНЫЕ RQ</TabsTrigger>
             )}
           </TabsList>
 
           {/* Cameras Tab */}
           <TabsContent value="cameras">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-transparent">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 bg-transparent">
               {cameras.map((camera) => (
                 <Card key={camera.id} className="bg-vhs-black border-vhs-crimson">
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-2 p-3 sm:p-4">
                     <div className="flex justify-between items-center">
-                      <h3 className="font-mono text-lg text-slate-50">{camera.id}</h3>
+                      <h3 className="font-mono text-base sm:text-lg text-slate-50">{camera.id}</h3>
                       <Badge 
                         variant={camera.status === 'ONLINE' ? 'default' : 'destructive'}
-                        className={camera.status === 'ONLINE' ? 'bg-vhs-crimson text-vhs-white' : 'bg-vhs-red text-vhs-white'}
+                        className={`text-xs ${camera.status === 'ONLINE' ? 'bg-vhs-crimson text-vhs-white' : 'bg-vhs-red text-vhs-white'}`}
                       >
                         {camera.status}
                       </Badge>
                     </div>
-                    <p className="text-sm opacity-70 text-slate-50">{camera.location}</p>
+                    <p className="text-xs sm:text-sm opacity-70 text-slate-50">{camera.location}</p>
                   </CardHeader>
-                  <CardContent>
-                    <div className="relative aspect-video bg-vhs-gray mb-3 overflow-hidden">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="relative aspect-video bg-vhs-gray mb-2 sm:mb-3 overflow-hidden">
                       {camera.feed ? (
                         <img 
                           src={camera.feed} 
@@ -1220,23 +1259,62 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Secret Code Input Dialog */}
+      <Dialog open={secretInputOpen} onOpenChange={setSecretInputOpen}>
+        <DialogContent className="bg-vhs-black border-purple-500 max-w-sm mx-auto">
+          <DialogHeader>
+            <DialogTitle className="text-purple-400 font-mono text-center">
+              🔐 ВВОД СЕКРЕТНОГО КОДА
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center text-purple-300 text-sm">
+              Введите код доступа к засекреченным данным
+            </div>
+            <Input
+              type="text"
+              value={secretCodeInput}
+              onChange={(e) => setSecretCodeInput(e.target.value.toUpperCase())}
+              placeholder="ВВЕДИТЕ КОД..."
+              className="bg-purple-950/30 border-purple-600 text-purple-200 font-mono text-center uppercase"
+              autoFocus
+            />
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setSecretInputOpen(false)}
+                variant="outline"
+                className="flex-1 border-purple-600 text-purple-300 hover:bg-purple-900/30"
+              >
+                ОТМЕНА
+              </Button>
+              <Button
+                onClick={handleSecretCodeSubmit}
+                className="flex-1 bg-purple-600 text-vhs-white hover:bg-purple-700"
+              >
+                ВВЕСТИ
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* System Error Screen */}
       {systemError && (
         <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center font-vhs">
           <div className="text-center space-y-4 animate-pulse">
-            <div className="text-6xl text-red-500 font-bold">
+            <div className="text-4xl md:text-6xl text-red-500 font-bold">
               ☠ SYSTEM ERROR ☠
             </div>
-            <div className="text-2xl text-red-400">
+            <div className="text-xl md:text-2xl text-red-400">
               ACCESS DENIED
             </div>
-            <div className="text-lg text-red-300">
+            <div className="text-base md:text-lg text-red-300 px-4">
               UNAUTHORIZED DATA BREACH DETECTED
             </div>
-            <div className="text-sm text-red-200 opacity-70">
+            <div className="text-sm text-red-200 opacity-70 px-4">
               RQ-000 INFORMATION IS CLASSIFIED
             </div>
-            <div className="text-xs text-red-100 opacity-50">
+            <div className="text-xs text-red-100 opacity-50 px-4">
               Система будет восстановлена через 5 секунд...
             </div>
           </div>
