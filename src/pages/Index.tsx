@@ -159,13 +159,13 @@ const Index = () => {
     setSelectedRQ(rq);
     setRqDialogOpen(true);
     
-    // Специальная логика для секретных RQ
-    if (rq.id === 'RQ-000' || rq.id === 'RQ00-1') {
+    // Специальная логика только для RQ-000 (Розим)
+    if (rq.id === 'RQ-000') {
       setTimeout(() => {
         setSystemError(true);
         setRqDialogOpen(false);
         
-        // Звук системной ошибки
+        // Звук системной ошибки для RQ-000
         const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -173,14 +173,8 @@ const Index = () => {
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
         
-        // Разные частоты для разных RQ
-        if (rq.id === 'RQ-000') {
-          oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
-          oscillator.frequency.linearRampToValueAtTime(50, audioContext.currentTime + 1);
-        } else {
-          oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-          oscillator.frequency.linearRampToValueAtTime(100, audioContext.currentTime + 1);
-        }
+        oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+        oscillator.frequency.linearRampToValueAtTime(50, audioContext.currentTime + 1);
         oscillator.type = 'square';
         
         gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
@@ -1235,23 +1229,23 @@ const Index = () => {
               </pre>
             </div>
             
-            {(selectedRQ?.id === 'RQ-000' || selectedRQ?.id === 'RQ00-1') && (
+            {selectedRQ?.id === 'RQ-000' && (
               <div className="text-center space-y-2">
-                <div className={`animate-pulse text-lg font-bold ${
-                  selectedRQ?.id === 'RQ-000' ? 'text-red-400' : 'text-blue-400'
-                }`}>
-                  {selectedRQ?.id === 'RQ-000' 
-                    ? '⚠ КОНФИДЕНЦИАЛЬНАЯ ИНФОРМАЦИЯ ⚠'
-                    : '🔒 СОКРОВИЩЕ - МАКСИМАЛЬНАЯ ЗАЩИТА 🔒'
-                  }
+                <div className="text-red-400 animate-pulse text-lg font-bold">
+                  ⚠ КОНФИДЕНЦИАЛЬНАЯ ИНФОРМАЦИЯ ⚠
                 </div>
-                <div className={`text-sm ${
-                  selectedRQ?.id === 'RQ-000' ? 'text-red-300' : 'text-blue-300'
-                }`}>
-                  {selectedRQ?.id === 'RQ-000'
-                    ? 'Автоматическое закрытие через 3 секунды...'
-                    : 'Ограниченный доступ. Автозакрытие через 3 сек...'
-                  }
+                <div className="text-red-300 text-sm">
+                  Автоматическое закрытие через 3 секунды...
+                </div>
+              </div>
+            )}
+            {selectedRQ?.id === 'RQ00-1' && (
+              <div className="text-center space-y-2">
+                <div className="text-blue-400 animate-pulse text-lg font-bold">
+                  🔒 СОКРОВИЩЕ - МАКСИМАЛЬНАЯ ЗАЩИТА 🔒
+                </div>
+                <div className="text-blue-300 text-sm">
+                  Полный доступ к данным. Надежда человечества.
                 </div>
               </div>
             )}
@@ -1312,7 +1306,7 @@ const Index = () => {
               UNAUTHORIZED DATA BREACH DETECTED
             </div>
             <div className="text-sm text-red-200 opacity-70 px-4">
-              RQ-000 INFORMATION IS CLASSIFIED
+              RQ-000 РОЗИМ INFORMATION IS CLASSIFIED
             </div>
             <div className="text-xs text-red-100 opacity-50 px-4">
               Система будет восстановлена через 5 секунд...
