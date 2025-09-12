@@ -55,33 +55,39 @@ const Index = () => {
     const handleKeyPress = (e: KeyboardEvent) => {
       const newSequence = secretKeySequence + e.key;
       
-      if ('88JURKEYOPEN'.startsWith(newSequence)) {
-        setSecretKeySequence(newSequence);
-        
-        if (newSequence === '88JURKEYOPEN') {
-          setSecretTabVisible(true);
-          setActiveTab('unknown');
-          setSecretKeySequence('');
+      // Проверяем все возможные секретные коды
+      const secretCodes = ['88JURKEYOPEN', '1999Ince', 'IMISSYOU', 'LOSSCAM'];
+      let foundMatch = false;
+      
+      for (const code of secretCodes) {
+        if (code.startsWith(newSequence)) {
+          foundMatch = true;
+          setSecretKeySequence(newSequence);
           
-          // Звук разблокировки
-          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-          
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-          
-          oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-          oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.3);
-          oscillator.type = 'sine';
-          
-          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-          
-          oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 0.5);
+          if (newSequence === code) {
+            // Выполняем соответствующее действие
+            if (code === '88JURKEYOPEN') {
+              setSecretTabVisible(true);
+              setActiveTab('unknown');
+            } else if (code === '1999Ince') {
+              setUnlockedSecrets(prev => ({ ...prev, incident1999: true }));
+              setIncidentDocOpen(true);
+            } else if (code === 'IMISSYOU') {
+              setUnlockedSecrets(prev => ({ ...prev, labMap: true }));
+              setLabMapOpen(true);
+            } else if (code === 'LOSSCAM') {
+              setUnlockedSecrets(prev => ({ ...prev, camera767: true }));
+              setCamera767Open(true);
+            }
+            
+            setSecretKeySequence('');
+            playUnlockSound();
+          }
+          break;
         }
-      } else {
+      }
+      
+      if (!foundMatch) {
         setSecretKeySequence('');
       }
     };
