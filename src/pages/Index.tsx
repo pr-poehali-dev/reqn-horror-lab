@@ -830,6 +830,103 @@ const Index = () => {
           {/* Artificial Beings Tab */}
           <TabsContent value="specimens">
             <div className="space-y-6">
+              
+              {/* Secret Codes Input Section */}
+              <Card className="bg-gradient-to-r from-purple-950/30 to-indigo-950/30 border-purple-500 border-dashed">
+                <CardHeader>
+                  <h3 className="text-lg font-mono flex items-center gap-2 text-purple-400">
+                    <Icon name="Lock" size={18} className="text-purple-500" />
+                    🔐 СЕКРЕТНЫЕ КОДЫ ДОСТУПА
+                  </h3>
+                  <p className="text-sm text-purple-300 opacity-80">
+                    Введите специальные коды для доступа к засекреченной информации
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Input
+                      type="text"
+                      value={secretCodeInput}
+                      onChange={(e) => setSecretCodeInput(e.target.value)}
+                      placeholder="Введите секретный код..."
+                      className="bg-purple-950/20 border-purple-600 text-purple-200 font-mono placeholder-purple-400/60 flex-1"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSecretCodeSubmit();
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={handleSecretCodeSubmit}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+                      disabled={!secretCodeInput.trim()}
+                    >
+                      <Icon name="Key" size={16} className="mr-2" />
+                      АКТИВИРОВАТЬ
+                    </Button>
+                  </div>
+                  
+                  {/* Status indicators for unlocked secrets */}
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+                    <div className={`p-2 rounded border text-center font-mono ${
+                      secretTabVisible ? 'bg-purple-500/20 border-purple-500 text-purple-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
+                    }`}>
+                      {secretTabVisible ? '🔓 UNKNOWN RQ' : '🔒 88JURKEYOPEN'}
+                    </div>
+                    <div className={`p-2 rounded border text-center font-mono ${
+                      unlockedSecrets.incident1999 ? 'bg-red-500/20 border-red-500 text-red-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
+                    }`}>
+                      {unlockedSecrets.incident1999 ? '🔓 ИНЦИДЕНТ 1999' : '🔒 1999Ince'}
+                    </div>
+                    <div className={`p-2 rounded border text-center font-mono ${
+                      unlockedSecrets.labMap ? 'bg-blue-500/20 border-blue-500 text-blue-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
+                    }`}>
+                      {unlockedSecrets.labMap ? '🔓 КАРТА ЛАБОРАТОРИЙ' : '🔒 IMISSYOU'}
+                    </div>
+                    <div className={`p-2 rounded border text-center font-mono ${
+                      unlockedSecrets.camera767 ? 'bg-red-500/20 border-red-500 text-red-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
+                    }`}>
+                      {unlockedSecrets.camera767 ? '🔓 КАМЕРА 767' : '🔒 LOSSCAM'}
+                    </div>
+                  </div>
+
+                  {/* Quick access buttons for unlocked content */}
+                  {(unlockedSecrets.incident1999 || unlockedSecrets.labMap || unlockedSecrets.camera767) && (
+                    <div className="border-t border-purple-600/30 pt-3">
+                      <p className="text-xs text-purple-400 mb-2">БЫСТРЫЙ ДОСТУП К РАЗБЛОКИРОВАННОМУ КОНТЕНТУ:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {unlockedSecrets.incident1999 && (
+                          <Button
+                            size="sm"
+                            onClick={() => setIncidentDocOpen(true)}
+                            className="bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600/30 text-xs"
+                          >
+                            🔥 Документ 1999
+                          </Button>
+                        )}
+                        {unlockedSecrets.labMap && (
+                          <Button
+                            size="sm"
+                            onClick={() => setLabMapOpen(true)}
+                            className="bg-blue-600/20 border border-blue-500 text-blue-300 hover:bg-blue-600/30 text-xs"
+                          >
+                            🗺️ Карта лабораторий
+                          </Button>
+                        )}
+                        {unlockedSecrets.camera767 && (
+                          <Button
+                            size="sm"
+                            onClick={() => setCamera767Open(true)}
+                            className="bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600/30 text-xs"
+                          >
+                            📹 Камера 767
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
               {/* Lower - Safest */}
               <div className="space-y-3">
                 <h3 className="text-lg font-mono flex items-center gap-2 text-[#db14b5]">
