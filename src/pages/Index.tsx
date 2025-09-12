@@ -26,6 +26,14 @@ const Index = () => {
   const [systemError, setSystemError] = useState(false);
   const [secretCodeInput, setSecretCodeInput] = useState('');
   const [secretInputOpen, setSecretInputOpen] = useState(false);
+  const [unlockedSecrets, setUnlockedSecrets] = useState({
+    incident1999: false,
+    labMap: false,
+    camera767: false
+  });
+  const [incidentDocOpen, setIncidentDocOpen] = useState(false);
+  const [labMapOpen, setLabMapOpen] = useState(false);
+  const [camera767Open, setCamera767Open] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -84,30 +92,50 @@ const Index = () => {
     }
   }, [secretKeySequence, isAuthenticated]);
 
+  const playUnlockSound = () => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.3);
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+  };
+
   const handleSecretCodeSubmit = () => {
     if (secretCodeInput === '88JURKEYOPEN') {
       setSecretTabVisible(true);
       setActiveTab('unknown');
       setSecretInputOpen(false);
       setSecretCodeInput('');
-      
-      // Звук разблокировки
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.3);
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
+      playUnlockSound();
+    } else if (secretCodeInput === '1999Ince') {
+      setUnlockedSecrets(prev => ({ ...prev, incident1999: true }));
+      setIncidentDocOpen(true);
+      setSecretInputOpen(false);
+      setSecretCodeInput('');
+      playUnlockSound();
+    } else if (secretCodeInput === 'IMISSYOU') {
+      setUnlockedSecrets(prev => ({ ...prev, labMap: true }));
+      setLabMapOpen(true);
+      setSecretInputOpen(false);
+      setSecretCodeInput('');
+      playUnlockSound();
+    } else if (secretCodeInput === 'LOSSCAM') {
+      setUnlockedSecrets(prev => ({ ...prev, camera767: true }));
+      setCamera767Open(true);
+      setSecretInputOpen(false);
+      setSecretCodeInput('');
+      playUnlockSound();
     } else {
       setSecretCodeInput('');
     }
@@ -1369,6 +1397,179 @@ const Index = () => {
               >
                 ВВЕСТИ
               </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Incident 1999 Document Dialog */}
+      <Dialog open={incidentDocOpen} onOpenChange={setIncidentDocOpen}>
+        <DialogContent className="bg-black border-red-600 text-red-200 max-w-4xl font-mono">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-red-400 flex items-center gap-3">
+              <Icon name="FileX" size={24} className="text-red-500" />
+              🔥 СЕКРЕТНЫЙ ДОКУМЕНТ - ИНЦИДЕНТ 1999 🔥
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              <img 
+                src="/img/9d472cb8-6842-456d-abbb-736f8955e67f.jpg" 
+                alt="Засекреченный документ об инциденте 1999 года"
+                className="w-full max-w-2xl mx-auto border-2 border-red-600 shadow-lg shadow-red-900/50"
+              />
+            </div>
+            <div className="bg-red-950/30 border border-red-600 p-4 text-sm space-y-2">
+              <div className="text-red-400 font-bold">ДОПОЛНИТЕЛЬНЫЕ ДАННЫЕ:</div>
+              <div>📅 ДАТА: 15 октября 1999 года, 03:47</div>
+              <div>📍 ЛОКАЦИЯ: Подземный комплекс Б-7, уровень -12</div>
+              <div>☠️ ЖЕРТВЫ: 47 сотрудников, 12 охранников</div>
+              <div>🔥 СТАТУС: Локация запечатана бетоном</div>
+              <div className="text-red-300 pt-2">
+                ⚠️ ПРИМЕЧАНИЕ: Объект RQ-███ прорвал сдерживание. 
+                Весь персонал 12-го уровня был потерян. 
+                Аварийные протоколы сработали через 17 минут после нарушения.
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Lab Map Dialog */}
+      <Dialog open={labMapOpen} onOpenChange={setLabMapOpen}>
+        <DialogContent className="bg-black border-blue-600 text-blue-200 max-w-6xl font-mono">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-blue-400 flex items-center gap-3">
+              <Icon name="Map" size={24} className="text-blue-500" />
+              🗺️ КАРТА МИРОВЫХ ЛАБОРАТОРИЙ 🗺️
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center text-blue-300 text-sm mb-4">
+              РАСПОЛОЖЕНИЕ ИССЛЕДОВАТЕЛЬСКИХ КОМПЛЕКСОВ КОРПОРАЦИИ
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* World Map Visual */}
+              <div className="bg-blue-950/20 border border-blue-600 p-6 aspect-video flex items-center justify-center">
+                <div className="text-center space-y-3">
+                  <div className="text-6xl">🌍</div>
+                  <div className="text-blue-400 font-bold">ГЛОБАЛЬНАЯ СЕТЬ</div>
+                  <div className="text-xs text-blue-300">47 АКТИВНЫХ ОБЪЕКТОВ</div>
+                </div>
+              </div>
+              
+              {/* Lab Locations List */}
+              <div className="space-y-3 text-sm">
+                <div className="bg-blue-950/30 border border-blue-600 p-3">
+                  <div className="text-blue-400 font-bold">🇷🇺 РОССИЯ</div>
+                  <div>• Сибирь-1 (АКТИВЕН) - Координаты: [ЗАСЕКРЕЧЕНО]</div>
+                  <div>• Урал-База (АКТИВЕН) - RQ-объекты: 23</div>
+                  <div>• Арктика-7 (ЗАМОРОЖЕН) - Статус: Консервация</div>
+                </div>
+                
+                <div className="bg-blue-950/30 border border-blue-600 p-3">
+                  <div className="text-blue-400 font-bold">🇺🇸 США</div>
+                  <div>• Невада-51 (АКТИВЕН) - Уровень: МАКСИМУМ</div>
+                  <div>• Аляска-Альфа (АКТИВЕН) - RQ-объекты: 31</div>
+                  <div>• Подземка-TX (ПОТЕРЯН) - Последний сигнал: 2019</div>
+                </div>
+                
+                <div className="bg-blue-950/30 border border-blue-600 p-3">
+                  <div className="text-blue-400 font-bold">🌍 ДРУГИЕ</div>
+                  <div>• Антарктида-Омега (АКТИВЕН) - Глубина: 3.2км</div>
+                  <div>• Марианская-Б (АКТИВЕН) - Подводный комплекс</div>
+                  <div>• Сахара-Дельта (РАЗРУШЕН) - Дата потери: 2001</div>
+                </div>
+                
+                <div className="text-center text-blue-500 text-xs pt-3 border-t border-blue-600">
+                  ⚠️ КООРДИНАТЫ ЗАСЕКРЕЧЕНЫ • ДОСТУП ТОЛЬКО ДЛЯ РУКОВОДСТВА
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Camera 767 Dialog */}
+      <Dialog open={camera767Open} onOpenChange={setCamera767Open}>
+        <DialogContent className="bg-black border-red-600 text-red-200 max-w-4xl font-mono">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-red-400 flex items-center gap-3 animate-pulse">
+              <Icon name="Camera" size={24} className="text-red-500" />
+              📹 КАМЕРА 767 - ПОДЗЕМНЫЙ УРОВЕНЬ 📹
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Camera Feed Simulation */}
+            <div className="bg-red-950/20 border border-red-600 aspect-video relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-900/20 to-red-950/40"></div>
+              
+              {/* Static/Noise Overlay */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="w-full h-full bg-red-900/10 animate-pulse"></div>
+              </div>
+              
+              {/* Camera UI */}
+              <div className="absolute top-4 left-4 text-xs text-red-400">
+                <div>CAM-767 • ПОДЗЕМНЫЙ УРОВЕНЬ -15</div>
+                <div>🔴 LIVE • {currentTime.toLocaleTimeString()}</div>
+              </div>
+              
+              {/* Horror Scene */}
+              <div className="flex items-center justify-center h-full text-center space-y-4">
+                <div className="space-y-6">
+                  <div className="text-6xl animate-bounce">👁️</div>
+                  <div className="text-red-400 font-bold text-lg animate-pulse">
+                    НЕЧТО В ТЕМНОТЕ
+                  </div>
+                  <div className="text-red-300 text-sm">
+                    Движение зарегистрировано в секторе C-12
+                  </div>
+                </div>
+              </div>
+              
+              {/* Timestamp */}
+              <div className="absolute bottom-4 right-4 text-xs text-red-400">
+                ГЛУБИНА: 847 МЕТРОВ
+              </div>
+            </div>
+            
+            {/* Audio Controls and Logs */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="bg-red-950/30 border border-red-600 p-4">
+                <div className="text-red-400 font-bold mb-2">🔊 АУДИО ПОТОК</div>
+                <div className="space-y-2 text-sm">
+                  <div className="text-red-300 animate-pulse">
+                    👂 Слышны нечеловеческие крики...
+                  </div>
+                  <div className="text-red-300 animate-pulse">
+                    🎵 Низкочастотное рычание - 18.5 Гц
+                  </div>
+                  <div className="text-red-300 animate-pulse">
+                    💀 Скрежет когтей по металлу
+                  </div>
+                  <div className="text-red-500 font-bold animate-bounce">
+                    ⚠️ НЕЧТО ПРИБЛИЖАЕТСЯ К КАМЕРЕ
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-red-950/30 border border-red-600 p-4">
+                <div className="text-red-400 font-bold mb-2">📋 ЖУРНАЛ СОБЫТИЙ</div>
+                <div className="space-y-1 text-xs">
+                  <div>23:47 - Движение в секторе C-12</div>
+                  <div>23:51 - Температура упала до -5°C</div>
+                  <div>23:54 - Обнаружены царапины на стенах</div>
+                  <div className="text-red-400">23:58 - ГРОМКИЙ ВОЙ</div>
+                  <div className="text-red-500 font-bold">00:01 - СВЯЗЬ ПОТЕРЯНА</div>
+                  <div className="text-red-600 font-bold animate-pulse">00:03 - КАМЕРА ПОВРЕЖДЕНА</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center text-red-500 text-sm font-bold animate-pulse border-t border-red-600 pt-3">
+              ⚠️ ВНИМАНИЕ: ОБЪЕКТ НА СВОБОДЕ • НЕ ПРИБЛИЖАЙТЕСЬ К УРОВНЮ -15 ⚠️
             </div>
           </div>
         </DialogContent>
