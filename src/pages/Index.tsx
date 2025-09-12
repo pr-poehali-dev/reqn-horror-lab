@@ -839,7 +839,8 @@ const Index = () => {
                     🔐 СЕКРЕТНЫЕ КОДЫ ДОСТУПА
                   </h3>
                   <p className="text-sm text-purple-300 opacity-80">
-                    Введите специальные коды для доступа к засекреченной информации
+                    Введите специальные коды для доступа к засекреченной информации.<br/>
+                    <span className="text-xs text-purple-400/60">Коды можно найти в документах лаборатории...</span>
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -866,29 +867,31 @@ const Index = () => {
                     </Button>
                   </div>
                   
-                  {/* Status indicators for unlocked secrets */}
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
-                    <div className={`p-2 rounded border text-center font-mono ${
-                      secretTabVisible ? 'bg-purple-500/20 border-purple-500 text-purple-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
-                    }`}>
-                      {secretTabVisible ? '🔓 UNKNOWN RQ' : '🔒 88JURKEYOPEN'}
+                  {/* Status indicators for unlocked secrets - only show unlocked ones */}
+                  {(secretTabVisible || unlockedSecrets.incident1999 || unlockedSecrets.labMap || unlockedSecrets.camera767) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+                      {secretTabVisible && (
+                        <div className="p-2 rounded border text-center font-mono bg-purple-500/20 border-purple-500 text-purple-300">
+                          🔓 UNKNOWN RQ
+                        </div>
+                      )}
+                      {unlockedSecrets.incident1999 && (
+                        <div className="p-2 rounded border text-center font-mono bg-red-500/20 border-red-500 text-red-300">
+                          🔓 ИНЦИДЕНТ 1999
+                        </div>
+                      )}
+                      {unlockedSecrets.labMap && (
+                        <div className="p-2 rounded border text-center font-mono bg-blue-500/20 border-blue-500 text-blue-300">
+                          🔓 КАРТА ЛАБОРАТОРИЙ
+                        </div>
+                      )}
+                      {unlockedSecrets.camera767 && (
+                        <div className="p-2 rounded border text-center font-mono bg-red-500/20 border-red-500 text-red-300">
+                          🔓 КАМЕРА 767
+                        </div>
+                      )}
                     </div>
-                    <div className={`p-2 rounded border text-center font-mono ${
-                      unlockedSecrets.incident1999 ? 'bg-red-500/20 border-red-500 text-red-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
-                    }`}>
-                      {unlockedSecrets.incident1999 ? '🔓 ИНЦИДЕНТ 1999' : '🔒 1999Ince'}
-                    </div>
-                    <div className={`p-2 rounded border text-center font-mono ${
-                      unlockedSecrets.labMap ? 'bg-blue-500/20 border-blue-500 text-blue-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
-                    }`}>
-                      {unlockedSecrets.labMap ? '🔓 КАРТА ЛАБОРАТОРИЙ' : '🔒 IMISSYOU'}
-                    </div>
-                    <div className={`p-2 rounded border text-center font-mono ${
-                      unlockedSecrets.camera767 ? 'bg-red-500/20 border-red-500 text-red-300' : 'bg-gray-800/30 border-gray-600 text-gray-500'
-                    }`}>
-                      {unlockedSecrets.camera767 ? '🔓 КАМЕРА 767' : '🔒 LOSSCAM'}
-                    </div>
-                  </div>
+                  )}
 
                   {/* Quick access buttons for unlocked content */}
                   {(unlockedSecrets.incident1999 || unlockedSecrets.labMap || unlockedSecrets.camera767) && (
