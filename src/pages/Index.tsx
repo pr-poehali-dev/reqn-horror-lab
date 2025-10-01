@@ -24,8 +24,6 @@ const Index = () => {
   const [selectedRQ, setSelectedRQ] = useState<any>(null);
   const [rqDialogOpen, setRqDialogOpen] = useState(false);
   const [systemError, setSystemError] = useState(false);
-  const [secretCodeInput, setSecretCodeInput] = useState('');
-  const [secretInputOpen, setSecretInputOpen] = useState(false);
   const [unlockedSecrets, setUnlockedSecrets] = useState({
     incident1999: false,
     labMap: false,
@@ -34,6 +32,11 @@ const Index = () => {
   const [incidentDocOpen, setIncidentDocOpen] = useState(false);
   const [labMapOpen, setLabMapOpen] = useState(false);
   const [camera767Open, setCamera767Open] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [archivePassword, setArchivePassword] = useState('');
+  const [archiveError, setArchiveError] = useState('');
+  const [archiveUnlocked, setArchiveUnlocked] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -117,44 +120,45 @@ const Index = () => {
     oscillator.stop(audioContext.currentTime + 0.5);
   };
 
-  const handleSecretCodeSubmit = () => {
-    if (secretCodeInput === '88JURKEYOPEN') {
-      setSecretTabVisible(true);
-      setActiveTab('unknown');
-      setSecretInputOpen(false);
-      setSecretCodeInput('');
-      playUnlockSound();
-    } else if (secretCodeInput === '1999Ince') {
-      setUnlockedSecrets(prev => ({ ...prev, incident1999: true }));
-      setIncidentDocOpen(true);
-      setSecretInputOpen(false);
-      setSecretCodeInput('');
-      playUnlockSound();
-    } else if (secretCodeInput === 'IMISSYOU') {
-      setUnlockedSecrets(prev => ({ ...prev, labMap: true }));
-      setLabMapOpen(true);
-      setSecretInputOpen(false);
-      setSecretCodeInput('');
-      playUnlockSound();
-    } else if (secretCodeInput === 'LOSSCAM') {
-      setUnlockedSecrets(prev => ({ ...prev, camera767: true }));
-      setCamera767Open(true);
-      setSecretInputOpen(false);
-      setSecretCodeInput('');
+  const handleArchiveAccess = () => {
+    if (!currentUser || currentUser.level < 5) {
+      setArchiveError('ОШИБКА: Недостаточный уровень допуска');
+      setTimeout(() => setArchiveError(''), 3000);
+      return;
+    }
+    setArchiveDialogOpen(true);
+  };
+
+  const handleArchivePasswordSubmit = () => {
+    if (archivePassword === currentUser.archivePassword) {
+      setArchiveUnlocked(true);
+      setArchiveError('');
+      setArchivePassword('');
+      setArchiveDialogOpen(false);
+      setActiveTab('deceased');
       playUnlockSound();
     } else {
-      setSecretCodeInput('');
+      setArchiveError('ОШИБКА: Неверный пароль доступа к архиву');
+      setArchivePassword('');
+      setTimeout(() => setArchiveError(''), 3000);
     }
   };
 
   const handleLogin = () => {
-    // Список авторизованных сотрудников
+    // Список авторизованных сотрудников с уровнями доступа и паролями архива
     const authorizedPersonnel = [
-      { name: 'Dr. Petrov', password: 'reqn2024' },
-      { name: 'Scientist Volkov', password: 'experiment47' },
-      { name: 'Agent Smith', password: 'security01' },
-      { name: 'Dr. Kozlov', password: 'laboratory' },
-      { name: 'Researcher Ivanov', password: 'specimen23' },
+      { name: 'Dr. Petrov', password: 'reqn2024', level: 8, archivePassword: 'archives_petrov_8' },
+      { name: 'Scientist Volkov', password: 'experiment47', level: 4, archivePassword: '' },
+      { name: 'Agent Smith', password: 'security01', level: 10, archivePassword: 'smith_classified_10' },
+      { name: 'Dr. Kozlov', password: 'laboratory', level: 6, archivePassword: 'kozlov_lab_6' },
+      { name: 'Researcher Ivanov', password: 'specimen23', level: 3, archivePassword: '' },
+      { name: 'Director Sokolov', password: 'director2024', level: 12, archivePassword: 'sokolov_director_12' },
+      { name: 'Technician Morozov', password: 'tech2024', level: 2, archivePassword: '' },
+      { name: 'Security Chief Orlov', password: 'security_chief', level: 9, archivePassword: 'orlov_security_9' },
+      { name: 'Dr. Lebedeva', password: 'research_lead', level: 7, archivePassword: 'lebedeva_research_7' },
+      { name: 'Intern Kuznetsov', password: 'intern2024', level: 1, archivePassword: '' },
+      { name: 'Analyst Sergeev', password: 'data_analysis', level: 5, archivePassword: 'sergeev_data_5' },
+      { name: 'Unknown Entity', password: 'ERROR_404', level: -1, archivePassword: '' },
     ];
 
     const user = authorizedPersonnel.find(
@@ -164,6 +168,7 @@ const Index = () => {
 
     if (user) {
       setIsAuthenticated(true);
+      setCurrentUser(user);
       setLoginError('');
     } else {
       setLoginError('ОШИБКА: Неверные данные авторизации');
@@ -604,6 +609,147 @@ const Index = () => {
     }
   ];
 
+  const deceasedRQ = [
+    {
+      id: 'RQ-012',
+      name: 'Плазменный Элементаль',
+      status: 'TERMINATED',
+      cause: 'Самоуничтожение при попытке побега',
+      date: '15.03.2023',
+      method: 'Энергетическая перегрузка',
+      description: 'Существо из чистой плазмы. Было стабильно до инцидента 2023.',
+      fullDescription: `СТАТУС: СПИСАНО (TERMINATED)
+
+ДАТА СПИСАНИЯ: 15 марта 2023, 14:47
+
+ПРИЧИНА: Самоуничтожение при попытке побега из камеры сдерживания.
+
+ОПИСАНИЕ: Плазменный Элементаль представлял собой сгусток энергии, способный изменять свою форму и температуру. Достигал температуры до 15000°C.
+
+ИНЦИДЕНТ: RQ-012 предпринял попытку побега, вызвав энергетическую перегрузку сдерживающего поля. Перегрузка привела к критическому выбросу энергии и полному распаду структуры существа.
+
+ПОТЕРИ: 2 охранника получили ожоги 2-й степени. Камера сдерживания выведена из строя на 6 месяцев.
+
+ОСТАНКИ: Отсутствуют. Полный энергетический распад.`
+    },
+    {
+      id: 'RQ-034',
+      name: 'Костяной Паразит',
+      status: 'ELIMINATED',
+      cause: 'Устранён специальной группой',
+      date: '02.07.2022',
+      method: 'Термическое уничтожение',
+      description: 'Паразитическое существо, питающееся костным мозгом.',
+      fullDescription: `СТАТУС: УСТРАНЕНО (ELIMINATED)
+
+ДАТА УСТРАНЕНИЯ: 02 июля 2022, 03:22
+
+ПРИЧИНА: Активная угроза персоналу. Заражение 4 сотрудников.
+
+ОПИСАНИЕ: Многоножкообразное существо длиной до 60 см. Способно проникать в человеческое тело и питаться костным мозгом изнутри.
+
+МЕТОД УСТРАНЕНИЯ: Специальная группа реагирования применила криогенную заморозку с последующим термическим уничтожением при 2000°C.
+
+ПОТЕРИ: 4 сотрудника заражены (2 погибли, 2 прошли успешное лечение).
+
+ОСТАНКИ: Кремированы и захоронены в специальном контейнере на глубине 200м.`
+    },
+    {
+      id: 'RQ-058',
+      name: 'Призрачный Охотник',
+      status: 'DECEASED',
+      cause: 'Угасание энергии',
+      date: '21.11.2021',
+      method: 'Естественная смерть',
+      description: 'Полупрозрачная сущность, охотящаяся на живых существ.',
+      fullDescription: `СТАТУС: УМЕР (DECEASED)
+
+ДАТА СМЕРТИ: 21 ноября 2021, 23:15
+
+ПРИЧИНА: Естественное угасание энергии после 3 лет сдерживания.
+
+ОПИСАНИЕ: Полупрозрачная теневая сущность, способная проходить сквозь стены. Охотилась на мелких животных, высасывая их жизненную энергию.
+
+ОБСТОЯТЕЛЬСТВА: После 3 лет сдерживания энергия существа начала угасать. Несмотря на попытки подпитки энергией, RQ-058 полностью рассеялся.
+
+ПОТЕРИ: Отсутствуют.
+
+ОСТАНКИ: Не обнаружены. Полная энергетическая диссипация.`
+    },
+    {
+      id: 'RQ-077',
+      name: 'Биомасса "Голод"',
+      status: 'TERMINATED',
+      cause: 'Инцидент сдерживания',
+      date: '08.09.2020',
+      method: 'Кислотное растворение',
+      description: 'Разумная биомасса, постоянно увеличивающаяся в размерах.',
+      fullDescription: `СТАТУС: СПИСАНО (TERMINATED)
+
+ДАТА СПИСАНИЯ: 08 сентября 2020, 19:33
+
+ПРИЧИНА: Критическое нарушение протокола сдерживания. Разрастание до опасных размеров.
+
+ОПИСАНИЕ: Живая биомасса, непрерывно растущая при наличии органической пищи. Достигла массы 2.7 тонны до терминации.
+
+ИНЦИДЕНТ: RQ-077 прорвал первичное сдерживание и начал поглощать все органические материалы в секторе D. Было принято решение о немедленном уничтожении.
+
+МЕТОД УСТРАНЕНИЯ: Весь сектор D был затоплен промышленной кислотой. Процесс растворения занял 14 часов.
+
+ПОТЕРИ: 7 сотрудников сектора D не успели эвакуироваться.
+
+ОСТАНКИ: Кислотный ил утилизирован как биоопасные отходы уровня 4.`
+    },
+    {
+      id: 'RQ-103',
+      name: 'Ментальный Паразит "Шёпот"',
+      status: 'ELIMINATED',
+      cause: 'Угроза психического заражения',
+      date: '14.05.2019',
+      method: 'Электромагнитный импульс',
+      description: 'Нематериальная сущность, заражающая сознание людей.',
+      fullDescription: `СТАТУС: УСТРАНЕНО (ELIMINATED)
+
+ДАТА УСТРАНЕНИЯ: 14 мая 2019, 11:08
+
+ПРИЧИНА: Массовое психическое заражение персонала. 23 заражённых.
+
+ОПИСАНИЕ: Бесплотная психическая сущность, способная внедряться в сознание человека через слуховой канал. Заражённые слышали постоянный шёпот и теряли контроль над действиями.
+
+ИНЦИДЕНТ: RQ-103 прорвал психозащиту и заразил 23 сотрудника за 48 часов. Заражённые пытались освободить других RQ-существ.
+
+МЕТОД УСТРАНЕНИЯ: Использован экспериментальный электромагнитный импульс частоты 7.83 Гц (резонанс Шумана). Импульс нарушил энергетическую структуру сущности.
+
+ПОТЕРИ: 23 заражённых проходят психиатрическое лечение. 5 из них с постоянными психическими нарушениями.
+
+ОСТАНКИ: Сущность полностью дезинтегрирована.`
+    },
+    {
+      id: 'RQ-142',
+      name: 'Механический Рой',
+      status: 'DEACTIVATED',
+      cause: 'Системный сбой',
+      date: '30.12.2018',
+      method: 'ЭМИ деактивация',
+      description: 'Самовоспроизводящиеся наномашины неизвестного происхождения.',
+      fullDescription: `СТАТУС: ДЕАКТИВИРОВАНО (DEACTIVATED)
+
+ДАТА ДЕАКТИВАЦИИ: 30 декабря 2018, 06:45
+
+ПРИЧИНА: Неконтролируемое саморепликация. Угроза поглощения всей лаборатории.
+
+ОПИСАНИЕ: Рой самовоспроизводящихся наномашин размером 0.1 мм. Способны поглощать любой металл для создания копий.
+
+ИНЦИДЕНТ: RQ-142 вышел за пределы сдерживающей камеры и начал поглощать металлические конструкции здания. Популяция выросла в 10000 раз за 4 часа.
+
+МЕТОД УСТРАНЕНИЯ: Мощный ЭМИ импульс вывел из строя все наномашины одновременно.
+
+ПОТЕРИ: Повреждена вся электроника в секторе B. Восстановление заняло 3 месяца.
+
+ОСТАНКИ: Собраны и хранятся в защищённом контейнере как неактивная масса.`
+    }
+  ];
+
   // Экран авторизации
   if (!isAuthenticated) {
     return (
@@ -678,10 +824,15 @@ const Index = () => {
             </div>
 
             <div className="border-t border-vhs-crimson pt-2 text-xs opacity-40">
-              <div className="text-center">
-                <div>Тестовые данные:</div>
-                <div>Dr. Petrov / reqn2024</div>
-                <div>Agent Smith / security01</div>
+              <div className="text-center space-y-1">
+                <div className="font-bold">Тестовые данные:</div>
+                <div className="space-y-0.5">
+                  <div>Dr. Petrov / reqn2024 <span className="text-blue-400">(LVL 8)</span></div>
+                  <div>Agent Smith / security01 <span className="text-red-400">(LVL 10)</span></div>
+                  <div>Scientist Volkov / experiment47 <span className="text-gray-400">(LVL 4)</span></div>
+                  <div>Analyst Sergeev / data_analysis <span className="text-blue-400">(LVL 5)</span></div>
+                  <div>Unknown Entity / ERROR_404 <span className="text-purple-400">(LVL -1)</span></div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -713,30 +864,58 @@ const Index = () => {
           </div>
           <div className="text-center sm:text-right flex flex-col gap-2">
             <div className="text-lg sm:text-xl font-mono">{formatTime(currentTime)}</div>
-            <div className="flex items-center justify-center sm:justify-end gap-2">
-              <Badge variant="outline" className="border-vhs-crimson text-vhs-crimson text-xs">
-                СИСТЕМА АКТИВНА
-              </Badge>
-              <Button
-                size="sm"
-                onClick={() => setSecretInputOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-xs px-2 py-1"
-              >
-                <Icon name="Keyboard" size={14} className="mr-1" />
-                КОД
-              </Button>
-            </div>
+            {currentUser && (
+              <div className="flex flex-col gap-1 items-center sm:items-end">
+                <div className="text-xs opacity-70">Пользователь: <span className="text-vhs-crimson font-mono">{currentUser.name}</span></div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={`text-xs font-mono ${
+                    currentUser.level >= 10 ? 'border-red-500 text-red-400 animate-pulse' :
+                    currentUser.level >= 7 ? 'border-yellow-500 text-yellow-400' :
+                    currentUser.level >= 5 ? 'border-blue-500 text-blue-400' :
+                    currentUser.level >= 1 ? 'border-green-500 text-green-400' :
+                    'border-purple-500 text-purple-400 animate-pulse'
+                  }`}>
+                    {currentUser.level >= 0 ? `LVL ${currentUser.level}` : `АНОМАЛИЯ ${currentUser.level}`}
+                  </Badge>
+                  <Badge variant="outline" className="border-vhs-crimson text-vhs-crimson text-xs">
+                    ONLINE
+                  </Badge>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto p-2 sm:p-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className={`grid ${secretTabVisible ? 'grid-cols-3 lg:grid-cols-7' : 'grid-cols-2 lg:grid-cols-6'} w-full mb-4 sm:mb-6 bg-vhs-black border border-vhs-crimson`}>
+        <Tabs value={activeTab} onValueChange={(value) => {
+          if (value === 'deceased') {
+            // Проверка уровня доступа перед открытием вкладки
+            if (!currentUser || currentUser.level < 5) {
+              setArchiveError('ОШИБКА: Недостаточный уровень допуска (требуется 5+)');
+              setTimeout(() => setArchiveError(''), 3000);
+              return;
+            }
+            // Если архив не разблокирован, открываем диалог пароля
+            if (!archiveUnlocked) {
+              setArchiveDialogOpen(true);
+              return;
+            }
+          }
+          setActiveTab(value);
+        }} className="w-full">
+          <TabsList className={`grid ${secretTabVisible ? 'grid-cols-3 lg:grid-cols-8' : 'grid-cols-3 lg:grid-cols-7'} w-full mb-4 sm:mb-6 bg-vhs-black border border-vhs-crimson`}>
             <TabsTrigger value="cameras" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">КАМЕРЫ</TabsTrigger>
             <TabsTrigger value="incidents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">ИНЦИДЕНТЫ</TabsTrigger>
             <TabsTrigger value="specimens" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">ЭКСПЕРИМЕНТЫ</TabsTrigger>
             <TabsTrigger value="archive" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">АРХИВ</TabsTrigger>
+            <TabsTrigger 
+              value="deceased"
+              className="data-[state=active]:bg-yellow-600 data-[state=active]:text-vhs-white text-yellow-400 text-xs sm:text-sm p-1 sm:p-2"
+            >
+              <Icon name="Skull" size={14} className="inline mr-1" />
+              СПИСАННЫЕ
+            </TabsTrigger>
             <TabsTrigger value="documents" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">ДОКУМЕНТЫ</TabsTrigger>
             <TabsTrigger value="status" className="data-[state=active]:bg-vhs-crimson data-[state=active]:text-vhs-white text-xs sm:text-sm p-1 sm:p-2">СТАТУС</TabsTrigger>
             {secretTabVisible && (
@@ -831,105 +1010,51 @@ const Index = () => {
           <TabsContent value="specimens">
             <div className="space-y-6">
               
-              {/* Secret Codes Input Section */}
-              <Card className="bg-gradient-to-r from-purple-950/30 to-indigo-950/30 border-purple-500 border-dashed">
-                <CardHeader>
-                  <h3 className="text-lg font-mono flex items-center gap-2 text-purple-400">
-                    <Icon name="Lock" size={18} className="text-purple-500" />
-                    🔐 СЕКРЕТНЫЕ КОДЫ ДОСТУПА
-                  </h3>
-                  <p className="text-sm text-purple-300 opacity-80">
-                    Введите специальные коды для доступа к засекреченной информации.<br/>
-                    <span className="text-xs text-purple-400/60">Коды можно найти в документах лаборатории...</span>
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Input
-                      type="text"
-                      value={secretCodeInput}
-                      onChange={(e) => setSecretCodeInput(e.target.value)}
-                      placeholder="Введите секретный код..."
-                      className="bg-purple-950/20 border-purple-600 text-purple-200 font-mono placeholder-purple-400/60 flex-1"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleSecretCodeSubmit();
-                        }
-                      }}
-                    />
-                    <Button
-                      onClick={handleSecretCodeSubmit}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-6"
-                      disabled={!secretCodeInput.trim()}
-                    >
-                      <Icon name="Key" size={16} className="mr-2" />
-                      АКТИВИРОВАТЬ
-                    </Button>
-                  </div>
-                  
-                  {/* Status indicators for unlocked secrets - only show unlocked ones */}
-                  {(secretTabVisible || unlockedSecrets.incident1999 || unlockedSecrets.labMap || unlockedSecrets.camera767) && (
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
-                      {secretTabVisible && (
-                        <div className="p-2 rounded border text-center font-mono bg-purple-500/20 border-purple-500 text-purple-300">
-                          🔓 UNKNOWN RQ
-                        </div>
-                      )}
+              {/* Quick access buttons for unlocked secrets - show only if unlocked */}
+              {(unlockedSecrets.incident1999 || unlockedSecrets.labMap || unlockedSecrets.camera767) && (
+                <Card className="bg-gradient-to-r from-purple-950/30 to-indigo-950/30 border-purple-500">
+                  <CardHeader>
+                    <h3 className="text-lg font-mono flex items-center gap-2 text-purple-400">
+                      <Icon name="Unlock" size={18} className="text-purple-500" />
+                      🔓 РАЗБЛОКИРОВАННЫЕ СЕКРЕТЫ
+                    </h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
                       {unlockedSecrets.incident1999 && (
-                        <div className="p-2 rounded border text-center font-mono bg-red-500/20 border-red-500 text-red-300">
-                          🔓 ИНЦИДЕНТ 1999
-                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => setIncidentDocOpen(true)}
+                          className="bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600/30"
+                        >
+                          <Icon name="FileText" size={14} className="mr-1" />
+                          Документ 1999
+                        </Button>
                       )}
                       {unlockedSecrets.labMap && (
-                        <div className="p-2 rounded border text-center font-mono bg-blue-500/20 border-blue-500 text-blue-300">
-                          🔓 КАРТА ЛАБОРАТОРИЙ
-                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => setLabMapOpen(true)}
+                          className="bg-blue-600/20 border border-blue-500 text-blue-300 hover:bg-blue-600/30"
+                        >
+                          <Icon name="Map" size={14} className="mr-1" />
+                          Карта лабораторий
+                        </Button>
                       )}
                       {unlockedSecrets.camera767 && (
-                        <div className="p-2 rounded border text-center font-mono bg-red-500/20 border-red-500 text-red-300">
-                          🔓 КАМЕРА 767
-                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => setCamera767Open(true)}
+                          className="bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600/30"
+                        >
+                          <Icon name="Camera" size={14} className="mr-1" />
+                          Камера 767
+                        </Button>
                       )}
                     </div>
-                  )}
-
-                  {/* Quick access buttons for unlocked content */}
-                  {(unlockedSecrets.incident1999 || unlockedSecrets.labMap || unlockedSecrets.camera767) && (
-                    <div className="border-t border-purple-600/30 pt-3">
-                      <p className="text-xs text-purple-400 mb-2">БЫСТРЫЙ ДОСТУП К РАЗБЛОКИРОВАННОМУ КОНТЕНТУ:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {unlockedSecrets.incident1999 && (
-                          <Button
-                            size="sm"
-                            onClick={() => setIncidentDocOpen(true)}
-                            className="bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600/30 text-xs"
-                          >
-                            🔥 Документ 1999
-                          </Button>
-                        )}
-                        {unlockedSecrets.labMap && (
-                          <Button
-                            size="sm"
-                            onClick={() => setLabMapOpen(true)}
-                            className="bg-blue-600/20 border border-blue-500 text-blue-300 hover:bg-blue-600/30 text-xs"
-                          >
-                            🗺️ Карта лабораторий
-                          </Button>
-                        )}
-                        {unlockedSecrets.camera767 && (
-                          <Button
-                            size="sm"
-                            onClick={() => setCamera767Open(true)}
-                            className="bg-red-600/20 border border-red-500 text-red-300 hover:bg-red-600/30 text-xs"
-                          >
-                            📹 Камера 767
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
               {/* Lower - Safest */}
               <div className="space-y-3">
                 <h3 className="text-lg font-mono flex items-center gap-2 text-[#db14b5]">
@@ -1111,6 +1236,87 @@ const Index = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Deceased RQ Tab - Requires Level 5+ and Password */}
+          <TabsContent value="deceased">
+            {archiveUnlocked ? (
+              <div className="space-y-6">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-mono text-yellow-400 mb-2 flex items-center justify-center gap-2">
+                    <Icon name="Skull" size={28} className="text-yellow-500" />
+                    АРХИВ СПИСАННЫХ RQ
+                    <Icon name="Skull" size={28} className="text-yellow-500" />
+                  </h2>
+                  <p className="text-sm opacity-70 text-yellow-300">УРОВЕНЬ ДОСТУПА: {currentUser.level} | СТАТУС: РАЗРЕШЁН</p>
+                  <div className="border-t border-yellow-500 mt-2"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {deceasedRQ.map((rq) => (
+                    <Card key={rq.id} className="bg-vhs-black border-yellow-600 hover:border-yellow-500 transition-colors">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-mono text-sm text-slate-50">{rq.id}</h4>
+                          <Badge className={
+                            rq.status === 'TERMINATED' ? 'bg-red-700 text-white' :
+                            rq.status === 'ELIMINATED' ? 'bg-red-800 text-white' :
+                            rq.status === 'DECEASED' ? 'bg-gray-600 text-white' :
+                            'bg-gray-700 text-white'
+                          }>
+                            {rq.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-semibold text-yellow-200">{rq.name}</p>
+                        <p className="text-xs text-gray-300">{rq.description}</p>
+                        <div className="text-xs opacity-70 mt-2 space-y-1">
+                          <div><span className="text-yellow-400">Причина:</span> {rq.cause}</div>
+                          <div><span className="text-yellow-400">Дата:</span> {rq.date}</div>
+                          <div><span className="text-yellow-400">Метод:</span> {rq.method}</div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <Button 
+                          onClick={() => {
+                            setSelectedRQ(rq);
+                            setRqDialogOpen(true);
+                          }}
+                          size="sm" 
+                          className="w-full bg-yellow-700 hover:bg-yellow-600 text-white text-xs"
+                        >
+                          <Icon name="FileText" size={14} className="mr-1" />
+                          ПОЛНЫЙ ОТЧЁТ
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card className="bg-gradient-to-r from-yellow-950/30 to-red-950/30 border-yellow-600">
+                  <CardHeader>
+                    <h3 className="flex items-center gap-2 text-yellow-400">
+                      <Icon name="AlertTriangle" size={20} />
+                      ПРЕДУПРЕЖДЕНИЕ
+                    </h3>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-yellow-300">
+                      Данная информация является строго конфиденциальной. Доступ разрешён только персоналу с уровнем 5 и выше. 
+                      Все перечисленные RQ-существа были списаны в результате инцидентов или по соображениям безопасности.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <div className="text-center text-yellow-400 mt-10">
+                <Icon name="Lock" size={64} className="mx-auto mb-4 text-yellow-500" />
+                <p className="text-xl font-mono">ДОСТУП ЗАПРЕЩЁН</p>
+                <p className="text-sm opacity-70 mt-2">Требуется уровень 5+ и ввод пароля доступа</p>
+                {archiveError && (
+                  <p className="text-red-500 text-sm mt-4 animate-pulse">{archiveError}</p>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           {/* Unknown Beings Secret Tab */}
@@ -1469,39 +1675,58 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Secret Code Input Dialog */}
-      <Dialog open={secretInputOpen} onOpenChange={setSecretInputOpen}>
-        <DialogContent className="bg-vhs-black border-purple-500 max-w-sm mx-auto">
+      {/* Archive Password Dialog */}
+      <Dialog open={archiveDialogOpen} onOpenChange={setArchiveDialogOpen}>
+        <DialogContent className="bg-vhs-black border-yellow-500 max-w-sm mx-auto">
           <DialogHeader>
-            <DialogTitle className="text-purple-400 font-mono text-center">
-              🔐 ВВОД СЕКРЕТНОГО КОДА
+            <DialogTitle className="text-yellow-400 font-mono text-center flex items-center justify-center gap-2">
+              <Icon name="Lock" size={20} />
+              🔐 ДОСТУП К АРХИВУ
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="text-center text-purple-300 text-sm">
-              Введите код доступа к засекреченным данным
+            <div className="text-center text-yellow-300 text-sm space-y-2">
+              <p>Требуется личный пароль доступа к архиву</p>
+              <p className="text-xs opacity-70">Пользователь: {currentUser?.name}</p>
+              <p className="text-xs opacity-70">Уровень доступа: {currentUser?.level}</p>
             </div>
+            {archiveError && (
+              <div className="text-red-400 text-xs text-center animate-pulse font-mono">
+                {archiveError}
+              </div>
+            )}
             <Input
-              type="text"
-              value={secretCodeInput}
-              onChange={(e) => setSecretCodeInput(e.target.value.toUpperCase())}
-              placeholder="ВВЕДИТЕ КОД..."
-              className="bg-purple-950/30 border-purple-600 text-purple-200 font-mono text-center uppercase"
+              type="password"
+              value={archivePassword}
+              onChange={(e) => setArchivePassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleArchivePasswordSubmit();
+                }
+              }}
+              placeholder="ВВЕДИТЕ ПАРОЛЬ АРХИВА..."
+              className="bg-yellow-950/30 border-yellow-600 text-yellow-200 font-mono text-center"
               autoFocus
             />
             <div className="flex gap-2">
               <Button
-                onClick={() => setSecretInputOpen(false)}
+                onClick={() => {
+                  setArchiveDialogOpen(false);
+                  setArchivePassword('');
+                  setArchiveError('');
+                }}
                 variant="outline"
-                className="flex-1 border-purple-600 text-purple-300 hover:bg-purple-900/30"
+                className="flex-1 border-yellow-600 text-yellow-300 hover:bg-yellow-900/30"
               >
                 ОТМЕНА
               </Button>
               <Button
-                onClick={handleSecretCodeSubmit}
-                className="flex-1 bg-purple-600 text-vhs-white hover:bg-purple-700"
+                onClick={handleArchivePasswordSubmit}
+                className="flex-1 bg-yellow-600 text-vhs-black hover:bg-yellow-700"
+                disabled={!archivePassword.trim()}
               >
-                ВВЕСТИ
+                <Icon name="Unlock" size={16} className="mr-1" />
+                ОТКРЫТЬ
               </Button>
             </div>
           </div>
