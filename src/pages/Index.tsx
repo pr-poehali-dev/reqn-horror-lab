@@ -37,6 +37,8 @@ const Index = () => {
   const [archivePassword, setArchivePassword] = useState('');
   const [archiveError, setArchiveError] = useState('');
   const [archiveUnlocked, setArchiveUnlocked] = useState(false);
+  const [rozimReadAttempts, setRozimReadAttempts] = useState(0);
+  const [showWarningImage, setShowWarningImage] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -195,6 +197,21 @@ const Index = () => {
   };
 
   const openRQDetails = (rq: any) => {
+    // Проверяем если это Розим (RQ-000)
+    if (rq.id === 'RQ-000') {
+      const newAttempts = rozimReadAttempts + 1;
+      setRozimReadAttempts(newAttempts);
+      
+      // На 7-ой попытке показываем страшную картинку
+      if (newAttempts >= 7) {
+        setShowWarningImage(true);
+        playErrorSound();
+        // Скрываем через 5 секунд
+        setTimeout(() => setShowWarningImage(false), 5000);
+        return; // Не открываем карточку
+      }
+    }
+    
     setSelectedRQ(rq);
     setRqDialogOpen(true);
     
@@ -373,6 +390,44 @@ const Index = () => {
     playFleshTearSound(4500);
     
     setTimeout(() => setAudioPlaying(false), 6000);
+  };
+
+  const playErrorSound = () => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+    oscillator.frequency.linearRampToValueAtTime(100, audioContext.currentTime + 0.5);
+    oscillator.type = 'square';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+  };
+
+  const playUnlockSound = () => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+    oscillator.frequency.linearRampToValueAtTime(800, audioContext.currentTime + 0.2);
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
   };
 
   const openCamera = (camera: any) => {
@@ -606,6 +661,70 @@ const Index = () => {
       status: 'ANOMALY', 
       description: 'Пространственная аномалия в секторе C. ВХОД ЗАПРЕЩЕН',
       fullDescription: 'КЛАССИФИКАЦИЯ: КЕТЕР\n\nОПИСАНИЕ: Пространственная аномалия, превращающая сектор C в бесконечно повторяющиеся коридоры.\n\nЭФФЕКТЫ:\n• Искажение пространства внутри сектора\n• Невозможность найти выход обычными способами\n• Появление "призрачных" копий исследователей\n• Постоянно меняющаяся планировка\n\nВОЗДЕЙСТВИЕ НА ПЕРСОНАЛ:\n• Потеря ориентации в пространстве\n• Галлюцинации через 2+ часа\n• Полная дезориентация через 6+ часов\n• [ЗАСЕКРЕЧЕНО] через 12+ часов\n\nПРОТОКОЛ СДЕРЖИВАНИЯ: Сектор C полностью изолирован. Доступ запрещён всему персоналу без исключения.'
+    },
+    {
+      id: 'RQ-209b',
+      name: 'Детёныш Лисы-броненосца (Самка)',
+      status: 'JUVENILE',
+      description: 'Потомок RQ-209. Возраст 3 месяца. Проявляет уникальные способности',
+      fullDescription: `КЛАССИФИКАЦИЯ: БЕЗОПАСНЫЙ (наблюдение)
+
+БИОЛОГИЧЕСКИЕ ДАННЫЕ:
+• Возраст: 3 месяца
+• Мать: RQ-209 "Лиса-броненосец" (списана)
+• Отец: Неизвестен
+• Пол: Самка
+
+ВНЕШНИЙ ВИД: 
+• Длина тела: 35 см (растёт быстро)
+• Броня: Мягкая, светло-серая, укрепляется
+• Морда: Лисья, с большими любопытными глазами
+• Хвост: Пушистый с бронированными пластинами
+
+СПОСОБНОСТИ:
+• Частичное затвердевание брони при опасности
+• Невероятная скорость обучения
+• Способность чувствовать эмоции людей
+• Издаёт успокаивающие звуки при стрессе
+
+ПОВЕДЕНИЕ: Крайне игрива и дружелюбна. Тоскует по матери. Привязана к д-ру Петрову, который заботится о детёнышах. Часто спит свернувшись калачиком с братом.
+
+ПРОТОКОЛ СОДЕРЖАНИЯ: Содержится в специальной детской камере с братом RQ-209c. Круглосуточный уход. Диета: смесь мяса и специальных минералов для укрепления брони.
+
+ПРИМЕЧАНИЕ: Не демонстрирует агрессии матери. Возможно, обучение и социализация предотвратят трагический сценарий.`
+    },
+    {
+      id: 'RQ-209c',
+      name: 'Детёныш Лисы-броненосца (Самец)',
+      status: 'JUVENILE',
+      description: 'Потомок RQ-209. Возраст 3 месяца. Более агрессивен чем сестра',
+      fullDescription: `КЛАССИФИКАЦИЯ: БЕЗОПАСНЫЙ (усиленное наблюдение)
+
+БИОЛОГИЧЕСКИЕ ДАННЫЕ:
+• Возраст: 3 месяца
+• Мать: RQ-209 "Лиса-броненосец" (списана)
+• Отец: Неизвестен
+• Пол: Самец
+
+ВНЕШНИЙ ВИД:
+• Длина тела: 38 см (крупнее сестры)
+• Броня: Тёмно-серая, более твёрдая
+• Морда: Лисья, более хищные черты
+• Хвост: Пушистый с острыми шипами на пластинах
+
+СПОСОБНОСТИ:
+• Полное затвердевание брони (зафиксировано дважды)
+• Укус сильнее, чем у сестры
+• Повышенная реакция на угрозы
+• Может издавать предупреждающее рычание
+
+ПОВЕДЕНИЕ: Защищает сестру. Более осторожен с людьми, но доверяет д-ру Петрову. Проявляет признаки материнской агрессии при разделении с сестрой. Часто обнюхивает клетку, где содержалась мать.
+
+ПРОТОКОЛ СОДЕРЖАНИЯ: Содержится в специальной детской камере с сестрой RQ-209b. Усиленное наблюдение за агрессией. Диета: больше мяса, дополнительные минералы.
+
+⚠️ ПРЕДУПРЕЖДЕНИЕ: При проявлении агрессии, подобной матери, рассмотреть изоляцию от сестры.
+
+ПРИМЕЧАНИЕ: Д-р Петров считает, что детёныш просто защищает сестру и не опасен. Рекомендуется продолжить социализацию.`
     }
   ];
 
@@ -747,6 +866,47 @@ const Index = () => {
 ПОТЕРИ: Повреждена вся электроника в секторе B. Восстановление заняло 3 месяца.
 
 ОСТАНКИ: Собраны и хранятся в защищённом контейнере как неактивная масса.`
+    },
+    {
+      id: 'RQ-209',
+      name: 'Лиса-броненосец',
+      status: 'ELIMINATED',
+      cause: 'Защита новорождённых детёнышей',
+      date: '23.08.2024',
+      method: 'Огнестрельное оружие',
+      description: 'Гибрид лисы и броненосца. Была беременна. Крайне агрессивна после родов.',
+      fullDescription: `СТАТУС: УСТРАНЕНО (ELIMINATED)
+
+ДАТА УСТРАНЕНИЯ: 23 августа 2024, 03:17
+
+ПРИЧИНА: Смертельная угроза персоналу после родов двоих детёнышей.
+
+ОПИСАНИЕ: Уникальный гибрид рыжей лисы и гигантского броненосца. Длина тела 1.8 метра. Вес около 90 кг. Обладала острыми когтями, мощными челюстями и сегментированной бронёй на спине и боках.
+
+СПОСОБНОСТИ:
+• Мгновенное затвердевание брони (выдерживала пули калибра 9мм)
+• Скорость атаки до 60 км/ч
+• Укус силой 380 кг/см²
+• Территориальная агрессия в радиусе 50 метров
+
+ИСТОРИЯ: RQ-209 была обнаружена беременной в секторе D-12 в мае 2024. Изначально вела себя спокойно, позволяла проводить исследования. 22 августа родила двоих детёнышей (RQ-209b и RQ-209c).
+
+ИНЦИДЕНТ: Сразу после родов RQ-209 проявила крайнюю материнскую агрессию. Атаковала д-ра Соколова, который пытался осмотреть детёнышей. Нанесла смертельные ранения. Заблокировала выход из камеры. Охрана пыталась усмирить существо, но броня не пробивалась.
+
+МЕТОД УСТРАНЕНИЯ: Агент Орлов использовал бронебойные патроны калибра .338 Lapua Magnum. Потребовалось 7 выстрелов в незащищённые участки (шея, живот).
+
+ПОТЕРИ: 
+• Д-р Соколов (смертельное ранение, скончался до прибытия медиков)
+• 2 охранника (тяжёлые ранения, выжили)
+• Камера содержания (полностью разрушена)
+
+ОСТАНКИ: Тело кремировано. Броня сохранена для исследований. Показатели прочности: твёрдость 8 по шкале Мооса, эквивалент закалённой стали.
+
+ДЕТЁНЫШИ: RQ-209b (самка) и RQ-209c (самец) были изъяты и переведены в детскую камеру. Под наблюдением д-ра Петрова. Пока не проявляют агрессии матери.
+
+⚠️ ПРЕДУПРЕЖДЕНИЕ: Инцидент подчеркивает опасность работы с беременными RQ-существами. Обновлён протокол: немедленная изоляция при обнаружении беременности.
+
+ПРИМЕЧАНИЕ ДИРЕКТОРА: "Соколов был хорошим учёным. Его смерть - напоминание, что мы работаем с непредсказуемыми созданиями. Детёныши остаются под наблюдением, но при малейшем признаке материнской агрессии будут устранены."`
     }
   ];
 
@@ -1925,6 +2085,36 @@ const Index = () => {
             <div className="text-xs text-red-100 opacity-50 px-4">
               Система будет восстановлена через 5 секунд...
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Warning Image Dialog */}
+      {showWarningImage && (
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-[110] animate-pulse">
+          <div className="text-center space-y-6 font-mono p-4 md:p-8 max-w-4xl w-full">
+            <div className="text-vhs-red text-2xl md:text-3xl font-bold animate-pulse mb-6">
+              ⚠️ ПРЕДУПРЕЖДЕНИЕ ⚠️
+            </div>
+            <div className="border-4 border-vhs-red">
+              <img 
+                src="/img/746ebcfa-8f45-474d-a540-526b1a9ef858.jpg" 
+                alt="Warning" 
+                className="w-full h-auto"
+              />
+            </div>
+            <div className="space-y-3 text-vhs-red">
+              <p className="text-xl md:text-2xl font-bold">ПРЕКРАТИТЕ ПОПЫТКИ ДОСТУПА</p>
+              <p className="text-lg md:text-xl">ВОТ ЧТО ПРОИСХОДИТ СО СЛИШКОМ ЛЮБОПЫТНЫМИ</p>
+              <p className="text-base md:text-lg animate-pulse">ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ</p>
+              <p className="text-sm opacity-70">Попытка #{rozimReadAttempts}</p>
+            </div>
+            <Button 
+              onClick={() => setShowWarningImage(false)}
+              className="mt-6 bg-vhs-red text-vhs-white hover:bg-red-700 text-lg md:text-xl font-bold px-6 md:px-8 py-3 md:py-4"
+            >
+              Я ПОНЯЛ
+            </Button>
           </div>
         </div>
       )}
