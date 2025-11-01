@@ -2706,7 +2706,10 @@ RQ-существа (кроме Розима) - это отдельная кат
                   <CardContent className="p-3 sm:p-4 pt-0">
                     <Button 
                       className="w-full bg-blue-600 text-vhs-white hover:bg-blue-700"
-                      onClick={() => openIncident(incident)}
+                      onClick={() => {
+                        setSelectedIncident(incident);
+                        setIncidentDetailOpen(true);
+                      }}
                     >
                       ОТКРЫТЬ ОТЧЁТ
                     </Button>
